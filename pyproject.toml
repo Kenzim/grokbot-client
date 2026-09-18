@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "grokbot-client"
+version = "0.1.0"
+description = "Unofficial async Python client for the Grok Bot cloud-agent backend (aiserver.v1, Connect-RPC)"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx>=0.27",
+    "protobuf>=5.26",
+]
+
+[project.optional-dependencies]
+dev = ["grpcio-tools", "pytest", "pytest-asyncio", "ruff"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["grokbot"]
+
+[tool.ruff]
+target-version = "py310"

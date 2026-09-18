@@ -1,0 +1,5785 @@
+// Grok Bot backend API — reverse engineered from grok-bot 0.51.0
+// (Electron "sand" build, embedded protobuf-ts descriptors). Do not edit by hand.
+
+syntax = "proto3";
+
+package aiserver.v1;
+
+import "agent/v1/types.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+message AbortSandBoxStoreMultipartWritesRequest {
+  repeated SandBoxStoreMultipartWriteAbort uploads = 1;
+}
+
+message AbortSandBoxStoreMultipartWritesResponse {
+  repeated SandBoxStoreMultipartAbortResult results = 1;
+}
+
+message ActivateGrokBotTemplateVersionRequest {
+  string share_id = 1;
+  uint32 version = 2;
+}
+
+message ActivateGrokBotTemplateVersionResponse {
+  GrokBotTemplate template = 1;
+}
+
+message AddGrokBotAgentSkillRequest {
+  string agent_id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  string content = 4;
+}
+
+message AddGrokBotAgentSkillResponse {
+  GrokBotAgentMarketplace marketplace = 1;
+  repeated GrokBotAgentPlugin plugins = 2;
+  GrokBotAgentPluginSkill skill = 3;
+}
+
+message AdminCommandDenylist {
+  repeated string rules = 1;
+}
+
+message AdminDeleteGrokBotAgentRequest {
+  string agent_id = 1;
+  int32 team_id = 2;
+  string operator_email = 3;
+}
+
+message AdminDeleteGrokBotAgentResponse {
+  string id = 1;
+  GrokBotSlackAppRemoval slack_app_removal = 2;
+}
+
+message AdminForceDeleteGrokBotSessionBoxRequest {
+  string agent_id = 1;
+  string session_id = 2;
+}
+
+message AdminForceDeleteGrokBotSessionBoxResponse {
+  bool deleted = 1;
+  string reason = 2;
+  string tenant_id = 3;
+  int32 deleted_pod_count = 4;
+  int32 revoked_credential_count = 5;
+  bool stamp_cleared = 6;
+  string box_key = 7;
+}
+
+message AdminForceRecreateSandBoxRequest {
+  string auth_id = 1;
+  string flavor = 2;
+}
+
+message AdminGetGrokBotAgentDefinitionRequest {
+  string agent_ref = 1;
+  bool identity_only = 2;
+}
+
+message AdminGetGrokBotAgentDefinitionResponse {
+  GrokBotAgentDefinitionIdentity identity = 1;
+  GrokBotAgentDefinition definition = 2;
+  string refusal = 3;
+}
+
+message AdminGetGrokBotSessionBoxRequest {
+  string agent_id = 1;
+  string session_id = 2;
+}
+
+message AdminGetGrokBotSessionBoxResponse {
+  GrokBotSessionBox box = 1;
+  optional AdminSandBoxHostStatusResponse host = 2;
+  optional AdminSandBoxStoreStatusResponse store = 3;
+}
+
+message AdminGetGrokBotTeamAgentSharedStateRequest {
+  int32 team_id = 1;
+  string agent_id = 2;
+  bool identity_only = 3;
+}
+
+message AdminGetGrokBotTeamAgentSharedStateResponse {
+  GrokBotAgentDefinitionIdentity identity = 1;
+  string owner_email = 2;
+  bool owner_multiplayer_gate = 3;
+  GrokBotTeamAgentSharedState shared_state = 4;
+  string refusal = 5;
+}
+
+message AdminGetSandAgentTranscriptPageRequest {
+  string auth_id = 1;
+  string flavor = 2;
+  string agent_id = 3;
+  int64 before_seq = 4;
+  uint32 limit = 5;
+  int64 since_ms = 6;
+  int64 until_ms = 7;
+}
+
+message AdminGetSandAgentTranscriptPageResponse {
+  bool reachable = 1;
+  string entries_json = 2;
+  string reason = 3;
+  int64 next_before_seq = 4;
+}
+
+message AdminHibernateGrokBotSessionBoxRequest {
+  string agent_id = 1;
+  string session_id = 2;
+  bool force = 3;
+}
+
+message AdminHibernateGrokBotSessionBoxResponse {
+  bool started = 1;
+  string reason = 2;
+  string tenant_id = 3;
+  string box_key = 4;
+}
+
+message AdminHibernateSandBoxRequest {
+  string auth_id = 1;
+  string flavor = 2;
+  bool force = 3;
+}
+
+message AdminHibernateSandBoxResponse {
+  bool started = 1;
+  string reason = 2;
+}
+
+message AdminListGrokBotSessionBoxesRequest {
+  string auth_id = 1;
+  string agent_id = 2;
+  string page_cursor = 3;
+}
+
+message AdminListGrokBotSessionBoxesResponse {
+  repeated GrokBotSessionBox boxes = 1;
+  string next_page_cursor = 3;
+}
+
+message AdminListGrokBotTeamAgentsRequest {
+  int32 team_id = 1;
+}
+
+message AdminListGrokBotTeamAgentsResponse {
+  repeated GrokBotTeamAgent agents = 1;
+  string team_name = 2;
+  bool truncated = 3;
+  repeated GrokBotOrphanedSlackApp orphaned_slack_apps = 4;
+  bool orphaned_slack_apps_truncated = 5;
+}
+
+message AdminListSandAgentsRequest {
+  string auth_id = 1;
+  string flavor = 2;
+}
+
+message AdminListSandAgentsResponse {
+  bool reachable = 1;
+  string agents_json = 2;
+  string reason = 3;
+}
+
+message AdminListSandBoxStoreManifestVersionsRequest {
+  string auth_id = 1;
+  string flavor = 2;
+  string cursor = 3;
+  int32 max_versions = 4;
+  int32 parse_limit = 5;
+  optional int64 before_timestamp_ms = 6;
+}
+
+message AdminListSandBoxStoreManifestVersionsResponse {
+  string store_id = 1;
+  repeated SandBoxStoreManifestVersion versions = 2;
+  string next_cursor = 3;
+  bool truncated = 4;
+  bool time_scan_capped = 5;
+}
+
+message AdminReapGrokBotSessionBoxNowRequest {
+  string agent_id = 1;
+  string session_id = 2;
+  bool dry_run = 3;
+}
+
+message AdminReapGrokBotSessionBoxNowResponse {
+  string result = 1;
+  string reason = 2;
+  string tenant_id = 3;
+  bool dry_run = 4;
+  int32 pod_count = 5;
+  int32 deleted_pod_count = 6;
+  int32 revoked_credential_count = 7;
+  int32 deleted_object_count = 8;
+  bool stamp_cleared = 9;
+  string box_key = 10;
+}
+
+message AdminRecreateSandBoxRequest {
+  string auth_id = 1;
+  string flavor = 2;
+  bool preserve_data = 3;
+  bool force = 4;
+}
+
+message AdminRestoreSandBoxStoreSnapshotRequest {
+  string auth_id = 1;
+  string flavor = 2;
+  string manifest_version_id = 3;
+  optional int64 expected_entry_count = 4;
+}
+
+message AdminRestoreSandBoxStoreSnapshotResponse {
+  bool started = 1;
+  string reason = 2;
+  string operation_id = 3;
+  int64 current_entry_count = 4;
+  int64 target_entry_count = 5;
+}
+
+message AdminRetryGrokBotSlackAppRemovalRequest {
+  string agent_id = 1;
+  int32 team_id = 2;
+  string operator_email = 3;
+}
+
+message AdminRetryGrokBotSlackAppRemovalResponse {
+  GrokBotSlackAppRemoval slack_app_removal = 1;
+}
+
+message AdminSandBoxHostStatusRequest {
+  string auth_id = 1;
+  string flavor = 2;
+}
+
+message AdminSandBoxHostStatusResponse {
+  bool gateway_reachable = 1;
+  optional string host_version = 2;
+  optional bool host_update_available = 3;
+  optional string latest_host_version = 4;
+  optional bool is_busy = 5;
+  optional int64 last_busy_at_ms = 6;
+}
+
+message AdminSandBoxStoreStatusRequest {
+  string auth_id = 1;
+  string flavor = 2;
+}
+
+message AdminSandBoxStoreStatusResponse {
+  bool durable = 1;
+  int64 entry_count = 2;
+  int64 total_bytes = 3;
+  int64 last_snapshot_at_ms = 4;
+  bool reachable = 5;
+}
+
+message AdminSnapshotSandBoxStoreRequest {
+  string auth_id = 1;
+  string flavor = 2;
+}
+
+message AdminSnapshotSandBoxStoreResponse {
+  bool ok = 1;
+  int64 manifest_entries = 2;
+  int64 files_uploaded = 3;
+  string reason = 4;
+}
+
+message AdminUpdateSandBoxHostRequest {
+  string auth_id = 1;
+  string flavor = 2;
+  bool force = 3;
+}
+
+message AdminUpdateSandBoxHostResponse {
+  bool started = 1;
+  string reason = 2;
+  string version = 3;
+}
+
+message AdminWatchSandBoxMigrationRequest {
+  string auth_id = 1;
+  string flavor = 2;
+  string from_offset_key = 3;
+}
+
+message AllowedMCPConfiguration {
+  optional bool disable_all = 1;
+  repeated AllowedMCPServer allowed_mcp_servers = 2;
+  optional bool require_mcp_servers_in_team_network_allowlist = 3;
+  optional bool allow_user_override_mcp_servers = 4;
+  repeated AllowedMCPServer denied_mcp_servers = 10;
+  optional bool enable_cursor_cloud_mcp = 11;
+}
+
+message AllowedMCPServer {
+  optional string command = 1;
+  optional string server_url = 2;
+  optional string name = 3;
+  repeated string network_allowlist = 4;
+  repeated string tool_allowlist = 5;
+  optional string network_mode = 6;
+  optional string tool_allowlist_mode = 7;
+}
+
+enum AllowlistConfig {
+  ALLOWLIST_CONFIG_UNSPECIFIED = 0;
+  ALLOWLIST_CONFIG_ALLOWLIST = 1;
+  ALLOWLIST_CONFIG_BLOCKLIST = 2;
+}
+
+message AnalyticsContext {
+  optional ClientInfo client = 1;
+}
+
+message AnalyticsEvent {
+  string event_name = 1;
+  map<string, EventData> event_data = 2;
+  int64 timestamp = 3;
+}
+
+message ApproveOnePasswordCredentialRequestRequest {
+  string entry_id = 1;
+  string agent_id = 2;
+  string credential_id = 3;
+  string connection_id = 4;
+  string catalog_revision = 5;
+  string target_site = 6;
+  SandCredentialDecisionHarness harness = 7;
+}
+
+message AttributionControls {
+  bool disable_attribution = 1;
+}
+
+enum AutoCreatePrMode {
+  AUTO_CREATE_PR_MODE_UNSPECIFIED = 0;
+  AUTO_CREATE_PR_MODE_ALWAYS = 1;
+  AUTO_CREATE_PR_MODE_SINGLE = 2;
+  AUTO_CREATE_PR_MODE_NEVER = 3;
+}
+
+enum AutoCreatePrSetting {
+  AUTO_CREATE_PR_SETTING_UNSPECIFIED = 0;
+  AUTO_CREATE_PR_SETTING_ALWAYS = 1;
+  AUTO_CREATE_PR_SETTING_SINGLE = 2;
+  AUTO_CREATE_PR_SETTING_NEVER = 3;
+}
+
+enum AutomationDefaultVisibility {
+  AUTOMATION_DEFAULT_VISIBILITY_UNSPECIFIED = 0;
+  AUTOMATION_DEFAULT_VISIBILITY_VISIBLE = 1;
+  AUTOMATION_DEFAULT_VISIBILITY_EDITABLE = 2;
+  AUTOMATION_DEFAULT_VISIBILITY_PRIVATE = 3;
+}
+
+message AutoReviewInstructions {
+  repeated string allow_instructions = 1;
+  repeated string block_instructions = 2;
+}
+
+message AutoReviewRunModeReset {
+  int64 issued_at_ms = 1;
+}
+
+message AutoRunControls {
+  bool enabled = 1;
+  repeated string allowed = 2;
+  repeated string blocked = 3;
+  bool disable_mcp_auto_run = 4;
+  bool delete_file_protection = 5;
+  bool enable_run_everything = 6;
+  repeated string mcp_tool_allowlist = 7;
+  AutoRunSandboxingControls sandboxing_controls = 8;
+  bool browser_protection = 9;
+  optional bool enable_smart_auto = 10;
+  optional bool enable_allowlist_mode = 11;
+  AdminCommandDenylist admin_command_denylist = 12;
+}
+
+message AutoRunSandboxingControls {
+  SandboxingMode sandboxing = 1;
+  NetworkingMode sandbox_networking = 2;
+  GitMode sandbox_git = 3;
+  SandboxReadBoundaryMode sandbox_read_boundary = 4;
+  repeated string sandbox_read_allowlist_paths = 5;
+}
+
+message AvailableModelsRequest {
+  bool is_nightly = 1;
+  bool include_long_context_models = 2;
+  bool exclude_max_named_models = 3;
+  repeated string additional_model_names = 4;
+  optional bool use_model_parameters = 5;
+  optional bool include_hidden_models = 6;
+  optional bool do_not_use_markdown = 7;
+  optional bool variants_will_be_shown_in_exploded_list = 8;
+  optional bool for_automations = 9;
+  optional AvailableModelsScope scope = 10;
+  optional bool use_react_model_picker = 11;
+  optional bool use_cloud_agent_effort_modes = 12;
+  optional string admin_settings_group_public_id = 13;
+  optional bool byok_enabled = 14;
+  optional bool use_parameterized_automations_models = 15;
+  CloudAgentRequestScope expected_scope = 16;
+}
+
+message AvailableModelsResponse {
+  repeated string model_names = 1;
+  repeated AvailableModelsResponse.AvailableModel models = 2;
+  optional AvailableModelsResponse.FeatureModelConfig composer_model_config = 4;
+  optional AvailableModelsResponse.FeatureModelConfig cmd_k_model_config = 5;
+  optional AvailableModelsResponse.FeatureModelConfig background_composer_model_config = 6;
+  optional AvailableModelsResponse.FeatureModelConfig plan_execution_model_config = 7;
+  optional AvailableModelsResponse.FeatureModelConfig spec_model_config = 8;
+  optional AvailableModelsResponse.FeatureModelConfig deep_search_model_config = 9;
+  optional AvailableModelsResponse.FeatureModelConfig quick_agent_model_config = 10;
+  bool use_model_parameters = 11;
+  optional int32 disable_unused_models_after_n_hours = 12;
+  optional int32 upgrade_unchanged_models_after_n_hours = 13;
+  AvailableModelsResponse.ModelPickerDisplayConfiguration display_configuration = 15;
+  map<string, AvailableModelsResponse.FeatureModelConfig> subagent_model_configs = 16;
+  optional string experimental_model_id = 19;
+  optional string experimental_model_display_name = 20;
+  optional string nudge_new_chats_to_auto_optimize_for = 21;
+
+  message AvailableModel {
+    string name = 1;
+    bool default_on = 2;
+    optional bool is_long_context_only = 3;
+    optional bool is_chat_only = 4;
+    optional bool supports_agent = 5;
+    optional AvailableModelsResponse.DegradationStatus degradation_status = 6;
+    optional double price = 7;
+    optional AvailableModelsResponse.TooltipData tooltip_data = 8;
+    optional bool supports_thinking = 9;
+    optional bool supports_images = 10;
+    optional bool supports_auto_context = 11;
+    optional int32 auto_context_max_tokens = 12;
+    optional int32 auto_context_extended_max_tokens = 13;
+    optional bool supports_max_mode = 14;
+    optional int32 context_token_limit = 15;
+    optional int32 context_token_limit_for_max_mode = 16;
+    optional string client_display_name = 17;
+    optional string server_model_name = 18;
+    optional bool supports_non_max_mode = 19;
+    optional AvailableModelsResponse.TooltipData tooltip_data_for_max_mode = 20;
+    optional bool is_recommended_for_background_composer = 21;
+    optional bool supports_plan_mode = 22;
+    optional bool is_user_added = 23;
+    optional string inputbox_short_model_name = 24;
+    optional bool supports_sandboxing = 25;
+    optional bool supports_cmd_k = 26;
+    optional bool only_supports_cmd_k = 27;
+    optional int32 background_composer_sort_order = 28;
+    repeated ModelParameterDefinition parameter_definitions = 29;
+    repeated AvailableModelsResponse.ModelVariantConfig variants = 30;
+    optional CloudAgentEffortMode cloud_agent_effort_mode = 32;
+    optional string cloud_migrate_to_model = 33;
+    optional string upgrade_model_id = 34;
+    optional bool is_hidden = 35;
+    repeated string legacy_slugs = 36;
+    repeated string id_aliases = 37;
+    optional int32 named_model_section_index = 38;
+    optional string tagline = 39;
+    optional bool visible_in_routed_model_view = 40;
+    optional string vendor_name = 41;
+    optional AvailableModelsResponse.ModelVendor vendor = 42;
+    optional bool default_disabled_in_admin_allowlist = 43;
+    repeated CloudAgentEffortMode cloud_agent_effort_modes = 44;
+    optional bool supports_smart_mode_classifier = 45;
+    optional bool requires_data_retention = 46;
+    optional string reason_for_zdr_consent_block = 47;
+    repeated AvailableModelsResponse.ModelPickerBadge model_picker_badges = 48;
+  }
+
+  message ConfirmationDialogue {
+    string title = 1;
+    string body = 2;
+    string key = 3;
+    bool blocks_submission = 4;
+    optional AvailableModelsResponse.ConfirmationDialogue.Presentation presentation = 5;
+
+    enum Presentation {
+      PRESENTATION_UNSPECIFIED = 0;
+      PRESENTATION_POST_PICKER_WARNING = 1;
+    }
+  }
+
+  enum DegradationStatus {
+    DEGRADATION_STATUS_UNSPECIFIED = 0;
+    DEGRADATION_STATUS_DEGRADED = 1;
+    DEGRADATION_STATUS_DISABLED = 2;
+  }
+
+  message FeatureModelConfig {
+    string default_model = 1;
+    repeated string fallback_models = 2;
+    repeated string best_of_n_default_models = 3;
+  }
+
+  message ModelPickerBadge {
+    string label = 1;
+    AvailableModelsResponse.ModelPickerBadge.Variant variant = 2;
+    bool dismiss_on_selection = 3;
+
+    enum Variant {
+      VARIANT_UNSPECIFIED = 0;
+      VARIANT_ACCENT = 1;
+      VARIANT_NEUTRAL = 2;
+      VARIANT_SUCCESS = 3;
+      VARIANT_WARN = 4;
+      VARIANT_DANGER = 5;
+    }
+  }
+
+  message ModelPickerDisplayConfiguration {
+    AvailableModelsResponse.ModelPickerDisplayConfiguration.RoutedModelViewConfig routed_model_view_config = 1;
+    AvailableModelsResponse.ModelPickerDisplayConfiguration.NamedModelsViewConfig named_models_view_config = 2;
+    optional bool hide_search_bar = 3;
+    optional bool hide_add_models = 4;
+    optional string model_selection_restriction_message = 5;
+
+    message NamedModelsViewConfig {
+      optional AvailableModelsResponse.ModelPickerDisplayConfiguration.NamedModelsViewConfig.NamedViewToRoutedModelViewToggle named_view_to_routed_model_view_toggle = 2;
+      optional AvailableModelsResponse.ModelPickerDisplayConfiguration.NamedModelsViewConfig.NamedViewToRoutedModelViewNoButton named_view_to_routed_model_view_no_button = 3;
+      optional AvailableModelsResponse.ModelPickerDisplayConfiguration.NamedModelsViewConfig.NamedViewToRoutedModelViewButton named_view_to_routed_model_view_button = 4;
+
+      message NamedViewToRoutedModelViewButton {
+        string markdown = 1;
+      }
+
+      message NamedViewToRoutedModelViewNoButton {
+      }
+
+      message NamedViewToRoutedModelViewToggle {
+        string markdown = 1;
+      }
+    }
+
+    message RoutedModelViewConfig {
+      optional string title = 1;
+      optional AvailableModelsResponse.ModelPickerDisplayConfiguration.RoutedModelViewConfig.RoutedModelViewToNamedViewToggle routed_model_view_to_named_view_toggle = 2;
+      optional AvailableModelsResponse.ModelPickerDisplayConfiguration.RoutedModelViewConfig.RoutedModelViewToNamedViewButton routed_model_view_to_named_view_button = 3;
+      optional bool hide_search_bar = 4;
+      optional bool hide_routed_model_view = 5;
+
+      message RoutedModelViewToNamedViewButton {
+        string markdown = 1;
+      }
+
+      message RoutedModelViewToNamedViewToggle {
+        string title_markdown = 1;
+        optional string subtitle = 2;
+        optional bool set_to_last_named_model = 3;
+      }
+    }
+  }
+
+  message ModelVariantConfig {
+    repeated .agent.v1.RequestedModel.ModelParameterValue parameter_values = 1;
+    string display_name = 2;
+    bool is_max_mode = 3;
+    optional bool is_default_max_config = 4;
+    optional bool is_default_non_max_config = 5;
+    optional AvailableModelsResponse.TooltipData tooltip_data = 6;
+    optional string tagline = 7;
+    optional string display_name_outside_picker = 8;
+    optional string variant_string_representation = 9;
+    optional AvailableModelsResponse.ConfirmationDialogue confirmation_dialogue = 10;
+    optional string legacy_slug = 11;
+  }
+
+  message ModelVendor {
+    AvailableModelsResponse.ModelVendorId id = 1;
+    string display_name = 2;
+  }
+
+  enum ModelVendorId {
+    MODEL_VENDOR_ID_UNSPECIFIED = 0;
+    MODEL_VENDOR_ID_ANTHROPIC = 1;
+    MODEL_VENDOR_ID_OPENAI = 2;
+    MODEL_VENDOR_ID_GOOGLE = 3;
+    MODEL_VENDOR_ID_XAI = 4;
+    MODEL_VENDOR_ID_MOONSHOT = 5;
+    MODEL_VENDOR_ID_CURSOR = 6;
+    MODEL_VENDOR_ID_NVIDIA = 7;
+    MODEL_VENDOR_ID_ZAI = 8;
+    MODEL_VENDOR_ID_META = 9;
+    MODEL_VENDOR_ID_DEEPSEEK = 10;
+  }
+
+  message TooltipData {
+    string primary_text = 1;
+    string secondary_text = 2;
+    bool secondary_warning_text = 3;
+    string icon = 4;
+    string tertiary_text = 5;
+    string tertiary_text_url = 6;
+    optional string markdown_content = 7;
+  }
+}
+
+enum AvailableModelsScope {
+  AVAILABLE_MODELS_SCOPE_UNSPECIFIED = 0;
+  AVAILABLE_MODELS_SCOPE_USER_AVAILABLE = 1;
+  AVAILABLE_MODELS_SCOPE_AUTOMATIONS = 2;
+  AVAILABLE_MODELS_SCOPE_ADMIN_SETTINGS_ALL_APPLICATION_MODELS = 3;
+}
+
+message BackgroundAgentSettings {
+  repeated string allowlist = 1;
+  AllowlistConfig allowlist_config = 2;
+  bool team_followup_enabled = 3;
+  AutoCreatePrMode auto_create_pr = 4;
+  PrReviewOpenDestinationMode pr_review_open_destination = 5;
+  optional bool require_private_workers = 6;
+  GithubArtifactPostingMode github_artifact_posting = 7;
+  optional TeamFollowupEnabledMode team_followup_enabled_v2 = 8;
+  optional bool enable_long_running_agent_mode = 9;
+  CloudAgentEgressProtectionMode egress_protection_mode = 10;
+  optional bool lock_egress_protection_mode = 11;
+  optional bool enable_cloud_agent_testing = 12;
+  optional bool restrict_team_secrets_to_admins = 13;
+  optional bool enable_automations = 14;
+  optional bool allow_vm_sharing = 15;
+  optional bool allow_private_workers = 16;
+  optional PublicArtifactSharingMode public_artifact_sharing = 17;
+  optional bool ci_failure_followup_enabled = 18;
+  DataRetentionPolicy data_retention = 19;
+  optional bool restrict_team_environment_writes_to_admins = 20;
+  optional bool allow_remote_control = 21;
+  optional bool allow_private_worker_github_token_mint = 22;
+  optional bool allow_private_worker_secret_sync = 23;
+  optional bool disable_cloud_agents_in_sand = 24;
+  optional AutomationDefaultVisibility automation_default_visibility = 25;
+}
+
+message BackgroundComposerDefaultEnvironmentSetting {
+  optional EnvironmentRepoConfig repo_config = 1;
+  optional string environment_public_id = 2;
+}
+
+enum BackgroundComposerQuickActionExecutionMode {
+  BACKGROUND_COMPOSER_QUICK_ACTION_EXECUTION_MODE_UNSPECIFIED = 0;
+  BACKGROUND_COMPOSER_QUICK_ACTION_EXECUTION_MODE_SUBAGENT = 1;
+  BACKGROUND_COMPOSER_QUICK_ACTION_EXECUTION_MODE_PARENT_AGENT = 2;
+}
+
+message BackgroundComposerQuickActionSettings {
+  repeated BackgroundComposerQuickActionSubagentSlot quick_action_subagent_slots = 1;
+  bool quick_action_subagent_slots_explicitly_set = 2;
+  optional uint32 quick_action_subagent_catalog_version = 3;
+  repeated BackgroundComposerQuickActionSubagentTemplate quick_action_subagent_templates = 4;
+  repeated BackgroundComposerQuickActionSubagentTemplateMutation quick_action_subagent_template_mutations = 5;
+}
+
+message BackgroundComposerQuickActionSubagentSlot {
+  string id = 1;
+  string label = 2;
+  string template_id = 3;
+  string subagent_type = 4;
+  bool enabled = 5;
+  int32 order = 6;
+  BackgroundComposerQuickActionExecutionMode execution_mode = 7;
+}
+
+message BackgroundComposerQuickActionSubagentTemplate {
+  string template_id = 1;
+  string label = 2;
+  string description = 3;
+  string subagent_type = 4;
+  optional string prompt = 5;
+  BackgroundComposerQuickActionSubagentTemplateScope scope = 6;
+  bool can_edit = 7;
+  bool can_delete = 8;
+  optional string icon_name = 9;
+}
+
+message BackgroundComposerQuickActionSubagentTemplateMutation {
+  BackgroundComposerQuickActionSubagentTemplateOperation operation = 1;
+  BackgroundComposerQuickActionSubagentTemplate template = 2;
+}
+
+enum BackgroundComposerQuickActionSubagentTemplateOperation {
+  BACKGROUND_COMPOSER_QUICK_ACTION_SUBAGENT_TEMPLATE_OPERATION_UNSPECIFIED = 0;
+  BACKGROUND_COMPOSER_QUICK_ACTION_SUBAGENT_TEMPLATE_OPERATION_CREATE = 1;
+  BACKGROUND_COMPOSER_QUICK_ACTION_SUBAGENT_TEMPLATE_OPERATION_UPDATE = 2;
+  BACKGROUND_COMPOSER_QUICK_ACTION_SUBAGENT_TEMPLATE_OPERATION_DELETE = 3;
+}
+
+enum BackgroundComposerQuickActionSubagentTemplateScope {
+  BACKGROUND_COMPOSER_QUICK_ACTION_SUBAGENT_TEMPLATE_SCOPE_UNSPECIFIED = 0;
+  BACKGROUND_COMPOSER_QUICK_ACTION_SUBAGENT_TEMPLATE_SCOPE_BUILTIN = 1;
+  BACKGROUND_COMPOSER_QUICK_ACTION_SUBAGENT_TEMPLATE_SCOPE_USER = 2;
+  BACKGROUND_COMPOSER_QUICK_ACTION_SUBAGENT_TEMPLATE_SCOPE_TEAM = 3;
+}
+
+message BackgroundComposerUserEgressPolicy {
+  repeated string allowlist = 1;
+}
+
+message BatchEvent {
+  string event = 1;
+  .google.protobuf.Struct properties = 2;
+  int64 timestamp = 3;
+  optional string user_id = 4;
+  optional string anonymous_id = 5;
+  optional string message_id = 6;
+  optional AnalyticsContext context = 7;
+}
+
+message BatchRequest {
+  repeated BatchEvent events = 1;
+}
+
+message BatchResponse {
+}
+
+message BeginOnePasswordConnectionRequest {
+  string connection_id = 1;
+  string vault_id = 2;
+}
+
+message BeginOnePasswordConnectionResponse {
+  string mint_ticket = 1;
+  string connection_id = 2;
+  int32 expected_generation = 3;
+  CredentialExpirationMode expiration_mode = 4;
+  int64 provider_expires_in_seconds = 5;
+  int64 credential_expires_at_ms = 6;
+  int64 ticket_expires_at_ms = 7;
+  int32 policy_version = 8;
+}
+
+message BitbucketIntegrationSettings {
+  bool hidden = 1;
+}
+
+message BootstrapStatsigRequest {
+  optional bool ignore_dev_status = 1;
+  optional ClientOS operating_system = 2;
+  optional string device_model = 3;
+  optional string os_version = 4;
+  optional string form_factor = 5;
+  optional string stable_id = 6;
+  optional string client_channel = 7;
+  optional string bundle_id = 8;
+}
+
+message BootstrapStatsigResponse {
+  string config = 1;
+  uint64 generated_at_ms = 2;
+}
+
+message BrowserAccessControl {
+  repeated string allowlist = 1;
+  AllowlistConfig allowlist_config = 2;
+}
+
+message BrowserSettings {
+  BrowserAccessControl access_control = 1;
+}
+
+enum BulkTeamMemberSandBoxAction {
+  BULK_TEAM_MEMBER_SAND_BOX_ACTION_UNSPECIFIED = 0;
+  BULK_TEAM_MEMBER_SAND_BOX_ACTION_KILL = 1;
+  BULK_TEAM_MEMBER_SAND_BOX_ACTION_RECREATE = 2;
+}
+
+enum BulkTeamMemberSandBoxItemState {
+  BULK_TEAM_MEMBER_SAND_BOX_ITEM_STATE_UNSPECIFIED = 0;
+  BULK_TEAM_MEMBER_SAND_BOX_ITEM_STATE_QUEUED = 1;
+  BULK_TEAM_MEMBER_SAND_BOX_ITEM_STATE_RUNNING = 2;
+  BULK_TEAM_MEMBER_SAND_BOX_ITEM_STATE_SUCCEEDED = 3;
+  BULK_TEAM_MEMBER_SAND_BOX_ITEM_STATE_SKIPPED = 4;
+  BULK_TEAM_MEMBER_SAND_BOX_ITEM_STATE_FAILED = 5;
+}
+
+message BulkTeamMemberSandBoxOperationItem {
+  int32 user_id = 1;
+  BulkTeamMemberSandBoxItemState state = 2;
+  string reason = 3;
+  optional string recreate_operation_id = 4;
+}
+
+enum BulkTeamMemberSandBoxOperationState {
+  BULK_TEAM_MEMBER_SAND_BOX_OPERATION_STATE_UNSPECIFIED = 0;
+  BULK_TEAM_MEMBER_SAND_BOX_OPERATION_STATE_RUNNING = 1;
+  BULK_TEAM_MEMBER_SAND_BOX_OPERATION_STATE_SUCCEEDED = 2;
+  BULK_TEAM_MEMBER_SAND_BOX_OPERATION_STATE_PARTIALLY_SUCCEEDED = 3;
+  BULK_TEAM_MEMBER_SAND_BOX_OPERATION_STATE_FAILED = 4;
+}
+
+message CancelGrokBotRoomMemberTurnRequest {
+  string nonce = 1;
+  string member_agent_id = 2;
+  string reason = 3;
+}
+
+message CancelGrokBotRoomMemberTurnResponse {
+  bool delivered = 1;
+}
+
+message CancelGrokBotUserComputerRequestRequest {
+  string machine_id = 1;
+  string request_id = 2;
+}
+
+message CancelGrokBotUserComputerRequestResponse {
+}
+
+message CancelSandBoxUpgradeRequest {
+  bool dismiss_terminal_outcome = 1;
+}
+
+message CancelSandBoxUpgradeResponse {
+  SandBoxUpgradeSchedule schedule = 1;
+}
+
+message CancelSandTrialRequest {
+}
+
+message CancelSandTrialResponse {
+}
+
+enum CanvasVisibility {
+  CANVAS_VISIBILITY_UNSPECIFIED = 0;
+  CANVAS_VISIBILITY_PRIVATE = 1;
+  CANVAS_VISIBILITY_TEAM_VIEW = 2;
+}
+
+message CheckHttpMcpStatusRequest {
+  repeated int32 server_ids = 1;
+  string oauth_redirect_uri = 2;
+  optional int32 team_id = 3;
+  optional string service_account_id = 4;
+  bool force_reauth = 5;
+  optional string service_account_type = 6;
+  optional string post_auth_return_url = 7;
+  string account_key = 8;
+  repeated string server_identifiers = 9;
+}
+
+message CheckHttpMcpStatusResponse {
+  repeated CheckHttpMcpStatusResponse.ServerStatus statuses = 1;
+
+  message ServerStatus {
+    int32 id = 1;
+    bool is_available = 2;
+    bool requires_auth = 3;
+    optional string auth_url = 4;
+    optional string error = 5;
+    bool has_valid_token = 6;
+    optional string server_identifier = 7;
+    McpServedBy served_by = 8;
+  }
+}
+
+message ClearGrokBotHarnessMigrationHoldInternalRequest {
+  string owner_auth_id = 1;
+}
+
+message ClearGrokBotHarnessMigrationHoldInternalResponse {
+  bool cleared = 1;
+}
+
+message ClientAction {
+  string command_id = 1;
+  map<string, string> args = 2;
+}
+
+message ClientActionRequest {
+  string action = 1;
+  map<string, string> args = 2;
+}
+
+message ClientActionResponse {
+  bool success = 1;
+  optional string error_message = 2;
+  optional string info_message = 3;
+  optional string open_url = 4;
+}
+
+message ClientInfo {
+  optional string os = 1;
+  optional string arch = 2;
+  optional string os_version = 3;
+  optional string version = 4;
+  optional string layout = 5;
+}
+
+message ClientLogEntry {
+  ClientLogLevel level = 1;
+  string message = 2;
+  map<string, string> metadata = 3;
+  int64 timestamp = 4;
+  optional string error_message = 5;
+  optional string error_stack = 6;
+  string key = 7;
+}
+
+enum ClientLogLevel {
+  CLIENT_LOG_LEVEL_UNSPECIFIED = 0;
+  CLIENT_LOG_LEVEL_INFO = 1;
+  CLIENT_LOG_LEVEL_DEBUG = 2;
+  CLIENT_LOG_LEVEL_WARN = 3;
+  CLIENT_LOG_LEVEL_ERROR = 4;
+}
+
+message ClientNumericMetric {
+  string metric = 1;
+  double value = 2;
+  optional string session_id = 3;
+  optional string ff_hash = 4;
+  int64 timestamp_ms = 5;
+  optional string client_version = 6;
+  optional string os = 7;
+  optional string enabled_extensions_hash = 8;
+  optional string ff_resolved = 9;
+  optional string extensions_resolved = 10;
+  optional string window_type = 11;
+}
+
+enum ClientOS {
+  CLIENT_OS_UNSPECIFIED = 0;
+  CLIENT_OS_WINDOWS = 1;
+  CLIENT_OS_MACOS = 2;
+  CLIENT_OS_LINUX = 3;
+  CLIENT_OS_IOS = 4;
+  CLIENT_OS_ANDROID = 5;
+}
+
+message CliSettings {
+  repeated string allowlist = 1;
+  AllowlistConfig allowlist_config = 2;
+  bool disable_headless = 3;
+}
+
+enum CloudAgentEffortMode {
+  CLOUD_AGENT_EFFORT_MODE_UNSPECIFIED = 0;
+  CLOUD_AGENT_EFFORT_MODE_STANDARD = 1;
+  CLOUD_AGENT_EFFORT_MODE_GRIND = 2;
+}
+
+enum CloudAgentEgressProtectionMode {
+  CLOUD_AGENT_EGRESS_PROTECTION_MODE_UNSPECIFIED = 0;
+  CLOUD_AGENT_EGRESS_PROTECTION_MODE_ALLOW_ALL = 1;
+  CLOUD_AGENT_EGRESS_PROTECTION_MODE_DEFAULT_WITH_NETWORK_SETTINGS = 2;
+  CLOUD_AGENT_EGRESS_PROTECTION_MODE_NETWORK_SETTINGS_ONLY = 3;
+  CLOUD_AGENT_EGRESS_PROTECTION_MODE_PARENT_PLUS_NETWORK_SETTINGS = 4;
+}
+
+message CloudAgentModelSelection {
+  string model_id = 1;
+  repeated CloudAgentModelSelection.ParameterValue parameters = 2;
+  optional bool max_mode = 3;
+
+  message ParameterValue {
+    string id = 1;
+    string value = 2;
+  }
+}
+
+message CloudAgentPersonalScope {
+}
+
+message CloudAgentRequestScope {
+  oneof scope {
+    CloudAgentPersonalScope personal = 1;
+    int32 team_id = 2;
+  }
+}
+
+message CloudCanvasMetadata {
+  string store_id = 1;
+  string canvas_id = 2;
+  optional string title = 3;
+  string created_at = 4;
+  string updated_at = 5;
+  optional CanvasVisibility visibility = 6;
+  optional bool can_share_to_team = 7;
+}
+
+message CommandDeeplinkControls {
+  bool enabled = 1;
+}
+
+message CommandDescriptor {
+  string name = 1;
+  optional string description = 2;
+  optional string source_path = 3;
+  optional string source_url = 4;
+}
+
+message CommitGrokBotTranscriptEntriesRequest {
+  string agent_id = 1;
+  uint32 generation = 2;
+  repeated GrokBotTranscriptEntry entries = 3;
+  repeated GrokBotTranscriptEntryDelete deletes = 4;
+  string session_id = 5;
+}
+
+message CommitGrokBotTranscriptEntriesResponse {
+  uint32 committed_count = 1;
+  uint32 deleted_count = 2;
+  repeated GrokBotTranscriptEntryRejection rejections = 3;
+}
+
+message CompleteMcpOAuthRequest {
+  string state_id = 1;
+  string authorization_code = 2;
+}
+
+message CompleteMcpOAuthResponse {
+  string post_auth_return_url = 1;
+  string account_key = 2;
+}
+
+message CompleteOnePasswordConnectionRequest {
+  string mint_ticket = 1;
+  string service_account_token = 2;
+  string account_uuid = 3;
+  string account_email = 4;
+  string account_url = 5;
+}
+
+message CompleteSandBoxStoreMultipartWritesRequest {
+  repeated SandBoxStoreMultipartWriteCompletion completions = 1;
+}
+
+message CompleteSandBoxStoreMultipartWritesResponse {
+  repeated SandBoxStoreMultipartWriteResult results = 1;
+}
+
+message ConfigureSpendLimitAction {
+  string confirm_label = 1;
+}
+
+message CreateGrokBotAgentFromTemplateRequest {
+  string share_id = 1;
+  string agent_id = 2;
+  optional uint32 expected_active_version = 3;
+  optional GrokBotFirstPartyTemplate first_party_template = 4;
+  optional string creator_context = 5;
+  optional bool setup_delegation_supported = 6;
+}
+
+message CreateGrokBotAgentFromTemplateResponse {
+  GrokBotAgent agent = 1;
+  optional string blob_get_url = 2;
+  bool setup_handled_by_server = 3;
+  bool conversational_setup_enabled = 4;
+  bool getting_started_trusted = 5;
+}
+
+message CreateGrokBotAgentRequest {
+  string legacy_agent_id = 1;
+  string name = 2;
+  string description = 3;
+  string title = 4;
+  string avatar_shape = 5;
+  string avatar_color = 6;
+  optional string avatar_data_url = 7;
+  string agent_id = 8;
+  GrokBotAgentHarnessKind harness = 9;
+  optional bool kickstart_requested = 10;
+  optional bool introduction_suppressed = 11;
+  optional string purpose = 12;
+  optional string origin = 13;
+  optional string language = 14;
+}
+
+message CreateGrokBotAgentResponse {
+  GrokBotAgent agent = 1;
+  GrokBotAgentHarnessKind harness = 2;
+}
+
+message CreateGrokBotMarketplaceCategoryInternalRequest {
+  string name = 1;
+}
+
+message CreateGrokBotMarketplaceCreatorInternalRequest {
+  string name = 1;
+  string profile_photo_url = 2;
+  map<string, string> handles = 3;
+}
+
+message CreateGrokBotMarketplaceListingInternalRequest {
+  int64 template_id = 1;
+  string slug = 2;
+  string category = 3;
+  int64 creator_id = 6;
+  repeated int64 category_ids = 7;
+}
+
+message CreateGrokBotRoomRequest {
+  string agent_id = 1;
+  string name = 2;
+  string description = 3;
+  repeated string member_agent_ids = 4;
+  repeated int32 human_member_user_ids = 5;
+}
+
+message CreateGrokBotRoomResponse {
+  GrokBotAgent agent = 1;
+}
+
+message CreateGrokBotTemplateRequest {
+  string name = 1;
+  string avatar_shape = 2;
+  string avatar_color = 3;
+  string source_agent_id = 5;
+  optional string blob_content_type = 6;
+  optional int64 blob_byte_size = 7;
+  string description = 8;
+  optional GrokBotTemplateVisibility requested_visibility = 10;
+}
+
+message CreateGrokBotTemplateResponse {
+  GrokBotTemplate template = 1;
+  optional string blob_put_url = 2;
+  uint32 version = 3;
+}
+
+enum CredentialExpirationMode {
+  CREDENTIAL_EXPIRATION_MODE_UNSPECIFIED = 0;
+  CREDENTIAL_EXPIRATION_MODE_DISABLED = 1;
+  CREDENTIAL_EXPIRATION_MODE_WARN = 2;
+  CREDENTIAL_EXPIRATION_MODE_ENFORCE = 3;
+}
+
+enum CredentialLifecycleState {
+  CREDENTIAL_LIFECYCLE_STATE_UNSPECIFIED = 0;
+  CREDENTIAL_LIFECYCLE_STATE_ACTIVE = 1;
+  CREDENTIAL_LIFECYCLE_STATE_EXPIRING = 2;
+  CREDENTIAL_LIFECYCLE_STATE_GRACE = 3;
+  CREDENTIAL_LIFECYCLE_STATE_EXPIRED = 4;
+  CREDENTIAL_LIFECYCLE_STATE_PROVIDER_REJECTED = 5;
+}
+
+message CredentialTargetRule {
+  CredentialTargetRuleKind kind = 1;
+  string scheme = 2;
+  string host = 3;
+  int32 port = 4;
+  string registrable_domain = 5;
+}
+
+enum CredentialTargetRuleKind {
+  CREDENTIAL_TARGET_RULE_KIND_UNSPECIFIED = 0;
+  CREDENTIAL_TARGET_RULE_KIND_EXACT_HOST_PORT = 1;
+  CREDENTIAL_TARGET_RULE_KIND_REGISTRABLE_DOMAIN = 2;
+}
+
+message CursorBlameSettings {
+  bool enabled = 1;
+}
+
+message CursorIgnoreControls {
+  bool hierarchical_enabled = 1;
+  bool ignore_symlinks = 2;
+}
+
+message DailySpendByCategory {
+  int64 day = 1;
+  string category = 2;
+  int32 spend_cents = 3;
+  int64 total_tokens = 4;
+}
+
+message DashboardAction {
+  string action = 1;
+  map<string, string> args = 2;
+  optional string success_message = 3;
+}
+
+message DataRetentionPolicy {
+  oneof kind {
+    DataRetentionPolicy.Indefinite indefinite = 1;
+    DataRetentionPolicy.Limited limited = 2;
+  }
+
+  message Indefinite {
+  }
+
+  message Limited {
+    uint32 hours = 1;
+  }
+}
+
+message DeeplinkControls {
+  bool enabled = 1;
+  bool allow_public_deeplinks = 2;
+}
+
+message DeleteGrokBotAgentAutomationRequest {
+  string agent_id = 1;
+  string automation_id = 2;
+  optional string time_zone = 3;
+}
+
+message DeleteGrokBotAgentAutomationResponse {
+  repeated GrokBotAgentAutomation automations = 1;
+}
+
+message DeleteGrokBotAgentRequest {
+  string id = 1;
+}
+
+message DeleteGrokBotAgentResponse {
+}
+
+message DeleteGrokBotMarketplaceListingInternalRequest {
+  int64 listing_id = 1;
+}
+
+message DeleteGrokBotMarketplaceListingInternalResponse {
+}
+
+message DeleteGrokBotSecretRequest {
+  string id = 1;
+  string name = 2;
+}
+
+message DeleteGrokBotSecretResponse {
+}
+
+message DeleteGrokBotTemplateRequest {
+  string share_id = 1;
+}
+
+message DeleteGrokBotTemplateResponse {
+}
+
+message DeleteGrokBotUserFormVaultEntryRequest {
+  string entry_id = 1;
+}
+
+message DeleteGrokBotUserFormVaultEntryResponse {
+}
+
+message DeleteMcpOAuthAccountRequest {
+  int32 server_id = 1;
+  string account_key = 2;
+}
+
+message DeleteMcpOAuthAccountResponse {
+}
+
+message DeleteMcpOAuthTokenRequest {
+  string server_url = 1;
+  optional string service_account_id = 2;
+  optional string source = 3;
+  string account_key = 4;
+}
+
+message DeleteMcpOAuthTokenResponse {
+}
+
+message DeleteOnePasswordConnectionRequest {
+  string connection_id = 1;
+}
+
+message DeleteTeamSandSetupManifestRequest {
+  string manifest_id = 1;
+  string expected_etag = 2;
+}
+
+message DeleteTeamSandSetupManifestResponse {
+}
+
+message DeliverGrokBotRoomMemberTurnResultRequest {
+  string room_id = 1;
+  string nonce = 2;
+  string member_agent_id = 3;
+  GrokBotRoomMemberTurnOutcome outcome = 4;
+  repeated string messages = 5;
+  string error = 6;
+}
+
+message DeliverGrokBotRoomMemberTurnResultResponse {
+  GrokBotRoomMemberTurnResultIntake intake = 1;
+}
+
+message DenyOnePasswordCredentialRequestRequest {
+  string entry_id = 1;
+  string agent_id = 2;
+  SandCredentialDecisionHarness harness = 3;
+}
+
+message DiscardGrokBotDraftRequest {
+  string agent_id = 1;
+  string entry_id = 2;
+  string session_id = 3;
+}
+
+message DiscardGrokBotDraftResponse {
+  bool accepted = 1;
+  optional GrokBotHarnessRefusal refusal = 2;
+}
+
+message DismissGrokBotUserFormRequest {
+  string agent_id = 1;
+  string entry_id = 2;
+  GrokBotUserFormDismissMode mode = 3;
+  string session_id = 4;
+  GrokBotUserFormClientPlatform platform = 5;
+}
+
+message DismissGrokBotUserFormResponse {
+  bool accepted = 1;
+  optional GrokBotHarnessRefusal refusal = 2;
+}
+
+message DismissGrokBotWidgetRequest {
+  string agent_id = 1;
+  string entry_id = 2;
+  string session_id = 3;
+}
+
+message DismissGrokBotWidgetResponse {
+  bool accepted = 1;
+  optional GrokBotHarnessRefusal refusal = 2;
+}
+
+message DownloadIssueTracesRequest {
+  string token = 1;
+  int32 limit = 2;
+}
+
+message DownloadIssueTracesResponse {
+  bytes data = 1;
+  int32 total_traces = 2;
+  int64 total_bytes = 3;
+}
+
+message EffectivePlugin {
+  Plugin plugin = 1;
+  bool is_team_required = 3;
+  bool is_enabled = 4;
+  optional string pinned_git_ref = 6;
+  .google.protobuf.Struct configured_variables = 7;
+  bool has_team_configured_variables = 8;
+  optional string inline_content_json = 9;
+  EffectivePluginInstallMode install_mode = 10;
+  repeated string configured_variable_keys = 11;
+}
+
+enum EffectivePluginInstallMode {
+  EFFECTIVE_PLUGIN_INSTALL_MODE_UNSPECIFIED = 0;
+  EFFECTIVE_PLUGIN_INSTALL_MODE_USER = 1;
+  EFFECTIVE_PLUGIN_INSTALL_MODE_TEAM_DEFAULT = 2;
+  EFFECTIVE_PLUGIN_INSTALL_MODE_TEAM_REQUIRED = 3;
+}
+
+message EndGrokBotBoxHandoffRequest {
+  string agent_id = 1;
+  string request_id = 2;
+  GrokBotBoxHandBackTrigger trigger = 3;
+}
+
+message EndGrokBotBoxHandoffResponse {
+  bool dispatched = 1;
+  optional string workflow_id = 2;
+}
+
+message EnsureGrokBotBoxHarnessMigrationPassRequest {
+  string operation_id = 1;
+}
+
+message EnsureGrokBotBoxHarnessMigrationPassResponse {
+  GrokBotBoxHarnessMigrationPassState state = 1;
+}
+
+message EnsureSandBoxRequest {
+  optional bool wake = 2;
+}
+
+message EnsureSandBoxResponse {
+  string cluster = 1;
+  string tenant_id = 2;
+  string pod_id = 3;
+  string network_token = 4;
+  string exec_daemon_auth_token = 5;
+  string exec_daemon_url = 6;
+  string vnc_url = 7;
+  string terminals_folder = 8;
+  optional bool image_update_available = 9;
+  string gateway_url = 10;
+  string gateway_token = 11;
+  string fork_vnc_base_url = 12;
+  SandBoxRunState run_state = 13;
+}
+
+message EnsureSandBoxWindowRequest {
+  int32 window_index = 2;
+}
+
+message EnvironmentJsonFileLocation {
+  string repo_url = 1;
+  string path = 2;
+}
+
+message EnvironmentRepoConfig {
+  repeated EnvironmentRepoEntry repos = 1;
+  optional EnvironmentJsonFileLocation environment_json_location = 2;
+}
+
+message EnvironmentRepoEntry {
+  string repo_url = 1;
+  string scm_repo_node_id = 2;
+  optional string git_enterprise_uuid = 3;
+}
+
+message ErrorButton {
+  string label = 1;
+  oneof action {
+    UpgradeAction upgrade = 2;
+    SwitchModelAction switch_model = 3;
+    ConfigureSpendLimitAction configure_spend_limit = 4;
+    UrlAction url = 5;
+    UpgradeChoice upgrade_choice = 6;
+    DashboardAction dashboard_action = 7;
+    ReloadWindowAction reload_window = 8;
+    ClientAction client_action = 9;
+  }
+}
+
+message EventData {
+  oneof data {
+    string string_value = 1;
+    int64 int_value = 2;
+    bool bool_value = 3;
+    double double_value = 4;
+  }
+}
+
+message ExecuteSandMcpToolRequest {
+  string server_identifier = 1;
+  string tool_name = 2;
+  .google.protobuf.Struct args = 3;
+  string tool_call_id = 4;
+  string agent_id = 5;
+  string turn_id = 6;
+  optional string mcp_config_json = 7;
+  optional GrokBotPluginScope grok_bot_plugin_scope = 8;
+}
+
+message ExecuteSandMcpToolResponse {
+  .agent.v1.McpResult result = 1;
+}
+
+message ExtensionInstallCooldownSettings {
+  int32 cooldown_hours = 1;
+}
+
+message ExtensionSigningSettings {
+  bool verification_enabled = 1;
+}
+
+message FirstPartyPendingModel {
+  string mcid = 1;
+  optional int64 enables_at = 2;
+}
+
+message FirstPartyPluginConfiguration {
+  FirstPartyPluginMode mode = 1;
+  repeated string allowed_plugin_ids = 2;
+}
+
+enum FirstPartyPluginMode {
+  FIRST_PARTY_PLUGIN_MODE_UNSPECIFIED = 0;
+  FIRST_PARTY_PLUGIN_MODE_ENABLE_ALL = 1;
+  FIRST_PARTY_PLUGIN_MODE_ALLOWLIST = 2;
+}
+
+message ForceRecreateSandBoxRequest {
+}
+
+message GenerateImageReferenceImage {
+  string data = 1;
+  string mime_type = 2;
+}
+
+message GetAggregatedUsageEventsRequest {
+  int32 team_id = 1;
+  optional int64 start_date = 2;
+  optional int64 end_date = 3;
+  optional int32 user_id = 4;
+}
+
+message GetAggregatedUsageEventsResponse {
+  repeated GetAggregatedUsageEventsResponse.ModelUsageAggregation aggregations = 1;
+  int64 total_input_tokens = 2;
+  int64 total_output_tokens = 3;
+  int64 total_cache_write_tokens = 4;
+  int64 total_cache_read_tokens = 5;
+  double total_cost_cents = 6;
+  double percent_of_burst_used = 7;
+  optional double total_request_cost = 8;
+
+  message ModelUsageAggregation {
+    string model_intent = 1;
+    int64 input_tokens = 2;
+    int64 output_tokens = 3;
+    int64 cache_write_tokens = 4;
+    int64 cache_read_tokens = 5;
+    double total_cents = 6;
+    optional double request_cost = 7;
+    optional int32 tier = 8;
+  }
+}
+
+message GetAvailableMcpServersRequest {
+  optional GrokBotPluginScope grok_bot_plugin_scope = 1;
+  optional string grok_bot_agent_id = 2;
+}
+
+message GetAvailableMcpServersResponse {
+  repeated GetAvailableMcpServersResponse.McpServerInfo servers = 1;
+
+  message McpAccountInfo {
+    string account_key = 1;
+    string server_identifier = 2;
+    bool user_has_access_token = 3;
+  }
+
+  message McpServerInfo {
+    int32 id = 1;
+    string name = 2;
+    bool is_team_server = 3;
+    bool enabled = 4;
+    string type = 5;
+    optional string command = 6;
+    repeated string args = 7;
+    optional string url = 8;
+    optional int64 plugin_id = 9;
+    bool is_unseen = 10;
+    optional bool user_has_access_token = 11;
+    bool is_required = 12;
+    bool managed_by_team_plugin_policy = 13;
+    bool disabled_by_team_admin_policy = 14;
+    optional string server_identifier = 15;
+    optional int32 owning_team_id = 16;
+    repeated GetAvailableMcpServersResponse.McpAccountInfo accounts = 17;
+    bool has_static_credential_headers = 18;
+    McpServedBy served_by = 19;
+  }
+}
+
+message GetBackgroundComposerUserSettingsRequest {
+  CloudAgentRequestScope expected_scope = 1;
+}
+
+message GetBackgroundComposerUserSettingsResponse {
+  optional string model_name = 1;
+  optional bool slack_notifications_for_web_enabled = 2;
+  optional bool ci_failure_followup_enabled = 3;
+  optional bool browser_use_enabled = 4;
+  optional AutoCreatePrSetting auto_create_pr_setting = 5;
+  optional PrReviewOpenDestinationMode pr_review_open_destination = 6;
+  optional GithubArtifactPostingMode github_artifact_posting = 7;
+  optional CloudAgentEgressProtectionMode egress_protection_mode = 8;
+  optional BackgroundComposerUserEgressPolicy egress_policy = 9;
+  optional string branch_prefix = 10;
+  optional BackgroundComposerQuickActionSettings quick_action_settings = 11;
+  optional bool allow_private_workers = 12;
+  optional string default_environment_public_id = 13;
+  repeated BackgroundComposerDefaultEnvironmentSetting default_environment_settings = 14;
+  optional bool remote_control_enabled = 15;
+  optional PrReviewOpenSurfaceMode pr_review_open_surface = 16;
+  repeated string sidebar_named_agent_ids = 17;
+  optional CloudAgentModelSelection default_model_selection = 18;
+  optional int32 ask_question_auto_answer_timeout_minutes = 19;
+}
+
+message GetBulkTeamMemberSandBoxOperationStatusRequest {
+  int32 team_id = 1;
+  string operation_id = 2;
+}
+
+message GetBulkTeamMemberSandBoxOperationStatusResponse {
+  string operation_id = 1;
+  BulkTeamMemberSandBoxAction action = 2;
+  BulkTeamMemberSandBoxOperationState state = 3;
+  uint32 total_count = 4;
+  uint32 queued_count = 5;
+  uint32 running_count = 6;
+  uint32 succeeded_count = 7;
+  uint32 skipped_count = 8;
+  uint32 failed_count = 9;
+  repeated BulkTeamMemberSandBoxOperationItem items = 10;
+}
+
+message GetCanvasPayloadRequest {
+  string store_id = 1;
+  string canvas_id = 2;
+}
+
+message GetCanvasPayloadResponse {
+  CloudCanvasMetadata metadata = 1;
+  bytes render_bundle_gzip = 2;
+  optional bytes data_json = 3;
+}
+
+message GetCurrentPeriodUsageRequest {
+  optional int32 team_id = 1;
+  optional bool include_pooled_usage = 2;
+}
+
+message GetCurrentPeriodUsageResponse {
+  int64 billing_cycle_start = 1;
+  int64 billing_cycle_end = 2;
+  GetCurrentPeriodUsageResponse.PlanUsage plan_usage = 3;
+  GetCurrentPeriodUsageResponse.SpendLimitUsage spend_limit_usage = 4;
+  optional int32 display_threshold = 5;
+  bool enabled = 6;
+  string display_message = 7;
+  optional GetCurrentPeriodUsageResponse.FreeBestOfNPromotion free_best_of_n_promotion = 8;
+  optional string auto_model_selected_display_message = 11;
+  optional string named_model_selected_display_message = 12;
+  repeated string auto_bucket_models = 13;
+
+  message FreeBestOfNPromotion {
+    int32 trials_used = 1;
+    int32 trials_remaining = 2;
+  }
+
+  message PlanUsage {
+    int32 total_spend = 1;
+    int32 included_spend = 2;
+    int32 bonus_spend = 3;
+    int32 remaining = 4;
+    int32 limit = 5;
+    optional bool remaining_bonus = 6;
+    optional string bonus_tooltip = 7;
+    optional int32 auto_spend = 8;
+    optional int32 api_spend = 9;
+    optional int32 auto_limit = 10;
+    optional int32 api_limit = 11;
+    optional double auto_percent_used = 12;
+    optional double api_percent_used = 13;
+    optional double total_percent_used = 14;
+  }
+
+  message SpendLimitUsage {
+    int32 total_spend = 1;
+    optional int32 pooled_limit = 2;
+    optional int32 pooled_used = 3;
+    optional int32 pooled_remaining = 4;
+    optional int32 individual_limit = 5;
+    int32 individual_used = 6;
+    int32 individual_remaining = 7;
+    string limit_type = 8;
+    optional int32 overall_limit = 9;
+    optional int32 overall_used = 10;
+    optional int32 overall_remaining = 11;
+  }
+}
+
+message GetDailySpendByCategoryRequest {
+  optional int32 team_id = 1;
+  optional int32 user_id = 2;
+  int64 period_start_ms = 3;
+  int64 period_end_ms = 4;
+  SpendGroupByCategory group_by = 5;
+  optional SpendType spend_type = 6;
+  optional string service_account_id = 7;
+  optional string cloud_agent_id = 8;
+  optional string automation_id = 9;
+  optional string automation_managed_type = 10;
+  optional string client_type = 11;
+  repeated string products = 12;
+}
+
+message GetDailySpendByCategoryResponse {
+  repeated DailySpendByCategory daily_spend = 1;
+  repeated string categories = 2;
+  optional int32 effective_limit_cents = 3;
+}
+
+message GetEffectiveUserPluginsRequest {
+  optional bool use_replica = 1;
+  optional int32 team_id = 2;
+  bool exclude_configured_variables = 4;
+}
+
+message GetEffectiveUserPluginsResponse {
+  repeated EffectivePlugin plugins = 1;
+  repeated Marketplace marketplaces = 2;
+}
+
+message GetFirstWindowStatsigDecisionRequest {
+  optional ClientOS operating_system = 1;
+}
+
+message GetFirstWindowStatsigDecisionResponse {
+  string variant = 1;
+  string reason = 2;
+}
+
+message GetGrokBotAgentPluginFileRequest {
+  string agent_id = 1;
+  int64 plugin_id = 2;
+  string path = 3;
+}
+
+message GetGrokBotAgentPluginFileResponse {
+  string content = 1;
+}
+
+message GetGrokBotAgentPluginsRequest {
+  string agent_id = 1;
+  bool include_mcp_config = 2;
+}
+
+message GetGrokBotAgentPluginsResponse {
+  optional GrokBotAgentMarketplace marketplace = 1;
+  repeated GrokBotAgentPlugin plugins = 2;
+}
+
+message GetGrokBotHarnessMigrationStatusInternalRequest {
+  string owner_auth_id = 1;
+}
+
+message GetGrokBotHarnessMigrationStatusInternalResponse {
+  GrokBotHarnessMigrationRolloutStatus rollout = 1;
+  string hold_state = 2;
+  repeated GrokBotHarnessMigrationAgentStatus agents = 3;
+  repeated GrokBotHarnessMigrationPassStatus passes = 4;
+  bool pass_history_available = 5;
+}
+
+message GetGrokBotMarketplaceCategoryInternalRequest {
+  int64 category_id = 1;
+}
+
+message GetGrokBotMarketplaceCreatorInternalRequest {
+  int64 creator_id = 1;
+}
+
+message GetGrokBotMarketplaceListingInternalRequest {
+  int64 listing_id = 1;
+}
+
+message GetGrokBotMarketplaceListingSourceTemplateInternalRequest {
+  int64 listing_id = 1;
+}
+
+message GetGrokBotMarketplaceListingSourceTemplateInternalResponse {
+  string recipe_json = 1;
+  int64 template_version_id = 2;
+  uint32 version = 3;
+}
+
+message GetGrokBotMarketplaceListingTemplateInternalRequest {
+  int64 listing_id = 1;
+}
+
+message GetGrokBotMarketplaceListingTemplateInternalResponse {
+  string recipe_json = 1;
+}
+
+message GetGrokBotRuntimeCapabilitiesRequest {
+}
+
+message GetGrokBotRuntimeCapabilitiesResponse {
+  GrokBotRuntimeCapabilities capabilities = 1;
+}
+
+message GetGrokBotSendStatusRequest {
+  string agent_id = 1;
+  string message_id = 2;
+  string session_id = 3;
+}
+
+message GetGrokBotSendStatusResponse {
+  GrokBotSendStatus status = 1;
+  optional string echo_entry_id = 2;
+  optional string rejection_code = 3;
+  optional int64 accepted_at_ms = 4;
+}
+
+message GetGrokBotSlackInstallStateRequest {
+  string agent_id = 1;
+}
+
+message GetGrokBotSlackInstallStateResponse {
+  GrokBotSlackInstallStatus status = 1;
+  optional string slack_team_id = 2;
+  optional string workspace_name = 3;
+  repeated GrokBotSlackWorkspace workspaces = 4;
+  bool needs_manifest_update = 5;
+  bool pending_reinstall_approval = 6;
+  optional string oauth_authorize_url = 7;
+  optional bool approval_request_filed = 8;
+}
+
+message GetGrokBotTemplateExportPolicyRequest {
+}
+
+message GetGrokBotTemplateExportPolicyResponse {
+  optional string export_policy = 1;
+  optional bool has_team = 2;
+}
+
+message GetGrokBotTemplateForSourceAgentRequest {
+  string source_agent_id = 1;
+}
+
+message GetGrokBotTemplateForSourceAgentResponse {
+  optional GrokBotTemplate template = 1;
+  optional string export_policy = 2;
+  optional bool has_team = 3;
+}
+
+message GetGrokBotTemplateImportDetailsRequest {
+  string share_id = 1;
+}
+
+message GetGrokBotTemplateImportDetailsResponse {
+  GrokBotTemplate template = 1;
+  string blob_get_url = 2;
+  uint32 expected_active_version = 3;
+  string creator_display_name = 4;
+}
+
+message GetGrokBotTemplateVersionRequest {
+  string share_id = 1;
+  uint32 version = 2;
+}
+
+message GetGrokBotTemplateVersionResponse {
+  uint32 version = 1;
+  bool active = 2;
+  int64 created_at_ms = 3;
+  string blob_object_key = 4;
+  string blob_get_url = 5;
+  GrokBotTemplateVisibility visibility = 6;
+}
+
+message GetGrokBotUserMcpSettingsRequest {
+}
+
+message GetGrokBotUserMcpSettingsResponse {
+  GrokBotUserMcpSettings settings = 1;
+}
+
+message GetGrokBotUserRuntimeSettingsRequest {
+}
+
+message GetGrokBotUserRuntimeSettingsResponse {
+  GrokBotUserRuntimeSettings settings = 1;
+}
+
+message GetHardLimitRequest {
+  optional int32 team_id = 1;
+}
+
+message GetHardLimitResponse {
+  int32 hard_limit = 1;
+  bool no_usage_based_allowed = 2;
+  optional int32 hard_limit_per_user = 3;
+  int32 per_user_monthly_limit_dollars = 4;
+  bool is_dynamic_team_limit = 5;
+  bool has_pending_setup_onboarding_credit_claim = 6;
+  bool is_setup_promo_active = 7;
+  optional int32 setup_promo_amount_cents = 8;
+  optional int32 setup_promo_credit_validity_days = 9;
+  bool on_demand_spend_disabled_by_organization = 10;
+  optional int32 per_user_first_party_models_additional_budget_dollars = 11;
+  optional bool per_user_first_party_models_additional_budget_unlimited = 12;
+}
+
+message GetManagedSkillsRequest {
+}
+
+message GetManagedSkillsResponse {
+  repeated ManagedSkill skills = 1;
+}
+
+message GetMcpConfigRequest {
+  bool team_scope = 1;
+  int32 team_id = 2;
+  bool redact_secrets = 3;
+}
+
+message GetMcpConfigResponse {
+  string config_json = 1;
+  map<string, McpServerMetadata> server_metadata_by_name = 2;
+}
+
+message GetMeRequest {
+  optional int32 team_id = 1;
+  optional string source_site_hostname = 2;
+  optional bool include_mobile_app_status = 3;
+}
+
+message GetMeResponse {
+  string auth_id = 1;
+  int32 user_id = 2;
+  optional string email = 3;
+  optional string first_name = 4;
+  optional string last_name = 5;
+  optional string workos_id = 6;
+  optional int32 team_id = 7;
+  optional string created_at = 8;
+  optional bool is_enterprise_user = 9;
+  optional string team_name = 10;
+  optional string email_domain_type = 11;
+  optional string country = 12;
+  optional string profile_picture_url = 13;
+  optional bool cursor_review_onboarding_use_cursor_github_app = 14;
+  optional int64 organization_id = 15;
+  optional string organization_public_id = 16;
+  optional bool is_team_admin = 17;
+  optional bool has_active_mobile_session = 18;
+  optional string public_user_id = 19;
+}
+
+message GetMonthlyBillingCycleRequest {
+  optional int32 team_id = 1;
+}
+
+message GetMonthlyBillingCycleResponse {
+  int64 start_date_epoch_millis = 1;
+  int64 end_date_epoch_millis = 2;
+}
+
+message GetOnePasswordStateRequest {
+}
+
+message GetPluginMcpConfigRequest {
+  int64 plugin_id = 1;
+}
+
+message GetPluginMcpConfigResponse {
+  string config_json = 1;
+  string commit_sha = 2;
+}
+
+message GetPublicGrokBotMarketplaceListingRequest {
+  string slug = 1;
+}
+
+message GetPublicGrokBotMarketplaceListingResponse {
+  PublicGrokBotMarketplaceListing listing = 1;
+  string template_get_url = 2;
+}
+
+message GetPublicGrokBotTemplateRequest {
+  string share_id = 1;
+}
+
+message GetPublicGrokBotTemplateResponse {
+  GrokBotTemplate template = 1;
+  string owner_display_name = 2;
+}
+
+message GetSandAccessStatusRequest {
+}
+
+message GetSandAccessStatusResponse {
+  GetSandAccessStatusResponse.SandAccessState state = 1;
+  GetSandAccessStatusResponse.SandPurchaseChannel purchase_channel = 2;
+  GetSandAccessStatusResponse.SandAccessBlockReason block_reason = 3;
+  repeated string purchasable_tiers = 4;
+  optional bool is_paid_trial_plan = 6;
+  bool unpaid_admin_needs_paid_seat = 7;
+  bool privacy_disclaimer_required = 9;
+  bool can_skip_onboarding = 10;
+  bool pro_and_super_grok_plans_grant_access = 11;
+
+  enum SandAccessBlockReason {
+    SAND_ACCESS_BLOCK_REASON_UNSPECIFIED = 0;
+    SAND_ACCESS_BLOCK_REASON_NONE = 1;
+    SAND_ACCESS_BLOCK_REASON_TEAM_PRIVACY_MODE = 2;
+    SAND_ACCESS_BLOCK_REASON_TEAM_SETUP_REQUIRED = 3;
+    SAND_ACCESS_BLOCK_REASON_TEAM_ACCESS_REQUIRED = 4;
+    SAND_ACCESS_BLOCK_REASON_NOT_OFFERED = 5;
+    SAND_ACCESS_BLOCK_REASON_FREE_TRIAL_AVAILABLE = 6;
+    SAND_ACCESS_BLOCK_REASON_PAYWALL_INDIVIDUAL = 7;
+    SAND_ACCESS_BLOCK_REASON_PAYWALL_TEAM_MEMBER = 8;
+    SAND_ACCESS_BLOCK_REASON_PAYWALL_TEAM_ADMIN = 9;
+  }
+
+  enum SandAccessState {
+    SAND_ACCESS_STATE_UNSPECIFIED = 0;
+    SAND_ACCESS_STATE_GRANTED = 1;
+    SAND_ACCESS_STATE_UNAVAILABLE = 2;
+    SAND_ACCESS_STATE_PAYMENT_REQUIRED = 3;
+  }
+
+  enum SandPurchaseChannel {
+    SAND_PURCHASE_CHANNEL_UNSPECIFIED = 0;
+    SAND_PURCHASE_CHANNEL_IN_APP = 1;
+    SAND_PURCHASE_CHANNEL_MANAGE_IN_CURSOR = 2;
+    SAND_PURCHASE_CHANNEL_MANAGE_ON_WEB = 3;
+  }
+}
+
+message GetSandBoxRunStateRequest {
+}
+
+message GetSandBoxRunStateResponse {
+  SandBoxRunState state = 1;
+  optional bool image_update_available = 2;
+}
+
+message GetSandBoxUpgradeScheduleRequest {
+}
+
+message GetSandBoxUpgradeScheduleResponse {
+  SandBoxUpgradeSchedule schedule = 1;
+}
+
+message GetSandMachineMessagesEnabledRequest {
+  string machine_id = 1;
+}
+
+message GetSandMachineMessagesEnabledResponse {
+  bool messages_enabled = 1;
+}
+
+message GetSandTrialClaimStatusRequest {
+}
+
+message GetSandTrialClaimStatusResponse {
+  GetSandTrialClaimStatusResponse.SandTrialClaimStatus status = 1;
+
+  enum SandTrialClaimStatus {
+    SAND_TRIAL_CLAIM_STATUS_UNSPECIFIED = 0;
+    SAND_TRIAL_CLAIM_STATUS_NONE = 1;
+    SAND_TRIAL_CLAIM_STATUS_PENDING_CARD = 2;
+    SAND_TRIAL_CLAIM_STATUS_GRANTED = 3;
+    SAND_TRIAL_CLAIM_STATUS_REJECTED_DUPLICATE_CARD = 4;
+    SAND_TRIAL_CLAIM_STATUS_BLOCKED = 5;
+  }
+}
+
+message GetSandUsageStatusRequest {
+}
+
+message GetSandUsageStatusResponse {
+  .google.protobuf.Timestamp current_period_start = 1;
+  .google.protobuf.Timestamp next_reset_timestamp_utc = 2;
+  optional double usage_percent = 3;
+  bool included_limit_zero = 4;
+  int64 available_banked_reset_count = 5;
+  bool uses_pooled_enterprise_allowance = 6;
+  bool has_available_usage = 7;
+  bool has_non_zero_included_limit = 8;
+  optional SandUpgradeRecommendation upgrade_recommendation = 9;
+  optional .google.protobuf.Timestamp sand_trial_expires_at = 10;
+  bool sand_trial_cancelable = 11;
+  repeated SandUpgradeRecommendation upgrade_recommendations = 12;
+  optional SandOnDemandSettings on_demand_settings = 13;
+  optional string included_usage_super_grok_plan = 14;
+  optional string grok_plan_label = 15;
+  bool is_team_seat = 16;
+  string cursor_plan_name = 17;
+}
+
+message GetTeamAdminSettingsRequest {
+  optional int32 team_id = 1;
+}
+
+message GetTeamAdminSettingsResponse {
+  repeated string allowed_models = 1;
+  repeated string blocked_models = 2;
+  AutoRunControls auto_run_controls = 3;
+  CursorIgnoreControls cursor_ignore_controls = 4;
+  bool dot_cursor_protection = 5;
+  optional AllowedMCPConfiguration allowed_mcp_configuration = 6;
+  optional BackgroundAgentSettings background_agent_settings = 7;
+  optional CliSettings cli_settings = 8;
+  optional MCPControls mcp_controls = 9;
+  optional PromptDeeplinkControls prompt_deeplink_controls = 10;
+  optional CommandDeeplinkControls command_deeplink_controls = 11;
+  optional DeeplinkControls deeplink_controls = 12;
+  optional GithubIntegrationSettings github_integration_settings = 13;
+  optional SlackIntegrationSettings slack_integration_settings = 14;
+  optional LinearIntegrationSettings linear_integration_settings = 15;
+  optional WorkspaceTrustControls workspace_trust_controls = 16;
+  optional GitlabIntegrationSettings gitlab_integration_settings = 17;
+  optional bool browser_features = 18;
+  optional bool byok_disabled = 19;
+  optional bool dashboard_analytics_requires_admin = 20;
+  optional SharedConversationSettings shared_conversation_settings = 21;
+  optional string allowed_extensions = 22;
+  repeated string browser_origin_allowlist = 23;
+  optional bool disable_conversation_insights = 24;
+  optional CursorBlameSettings cursor_blame_settings = 25;
+  repeated string network_denylist = 26;
+  repeated string network_allowlist = 27;
+  optional ExtensionSigningSettings extension_signing_settings = 28;
+  optional bool enforce_invite_domain_on_accept = 29;
+  optional FirstPartyPluginConfiguration first_party_plugin_configuration = 30;
+  optional AttributionControls attribution_controls = 31;
+  optional bool allow_third_party_plugin_imports = 32;
+  optional GlassSettings glass_settings = 33;
+  optional TeamAdminNewChatModelResetSettings new_chat_model_reset_settings = 34;
+  optional ModelAllowlist model_allowlist = 35;
+  optional JiraIntegrationSettings jira_integration_settings = 36;
+  optional PullRequestPreferences pull_request_preferences = 37;
+  optional BrowserSettings browser_settings = 38;
+  repeated string cloud_agent_egress_allowlist = 39;
+  optional bool mirror_sandbox_allowlist_for_egress = 40;
+  optional string remote_permissions_file_path = 41;
+  optional SharedCanvasSettings shared_canvas_settings = 42;
+  optional int32 invite_link_max_ttl_seconds = 43;
+  optional bool allow_user_local_plugin_imports = 44;
+  repeated string local_permissions_file_path = 45;
+  repeated string remote_permissions_file_paths = 46;
+  optional bool permissions_file_overrides_auto_run = 47;
+  optional ExtensionInstallCooldownSettings extension_install_cooldown_settings = 48;
+  AutoReviewInstructions auto_review = 49;
+  optional PublicProfileSettings public_profile_settings = 50;
+  optional BitbucketIntegrationSettings bitbucket_integration_settings = 51;
+  optional bool marketplace_leaderboard_disabled = 52;
+  optional bool new_chat_nudge_all_to_smart_auto = 53;
+  optional bool models_auto_only = 54;
+  optional string new_chat_nudge_all_to_smart_auto_optimize_for = 55;
+  optional bool restrict_invites_to_admins = 56;
+  optional bool viewer_can_invite_members = 57;
+  optional bool enforce_hooks_readiness = 58;
+  optional LlmGatewaySettings llm_gateway = 59;
+  optional LocalToolControls local_tool_controls = 60;
+  optional SandActionAuditSettings sand_action_audit_settings = 61;
+  optional SandOnboardingState sand_onboarding = 62;
+  optional bool origin_disabled = 63;
+  optional SandNetworkControls sand_network_controls = 64;
+  optional UserAgentStoreSkillsSyncSettings user_agent_store_skills_sync_settings = 65;
+  AutoReviewRunModeReset auto_review_run_mode_reset = 66;
+  optional bool enterprise_grok_bot_trial_available = 67;
+  SandGroupAccessMode sand_group_access_mode = 68;
+  optional SandAutoReviewControls sand_auto_review_controls = 69;
+  optional PrivateInferenceSettings private_inference = 70;
+  RemoteControlV2Policy remote_control_v2_policy = 71;
+  optional SandLocalEgressControls sand_local_egress_controls = 72;
+}
+
+message GetTeamMemberSandBoxMigrationStatusRequest {
+  int32 team_id = 1;
+  int32 user_id = 2;
+  string operation_id = 3;
+}
+
+message GetTeamMemberSandBoxMigrationStatusResponse {
+  optional SandBoxMigrationEvent event = 1;
+}
+
+message GetTeamMembersRequest {
+  int32 team_id = 1;
+}
+
+message GetTeamMembersResponse {
+  repeated TeamMember team_members = 1;
+  int32 user_id = 2;
+  bool is_scim_synced = 3;
+}
+
+message GetTeamPluginPopularityRequest {
+  int32 team_id = 1;
+  optional bool use_replica = 2;
+}
+
+message GetTeamPluginPopularityResponse {
+  repeated TeamPluginPopularityCount counts = 1;
+}
+
+message GetTeamsRequest {
+  optional bool active_only = 1;
+}
+
+message GetTeamsResponse {
+  repeated Team teams = 1;
+}
+
+message GetUserPrivacyModeRequest {
+  PrivacyMode inferred_privacy_mode = 1;
+  optional int32 team_id = 2;
+}
+
+message GetUserPrivacyModeResponse {
+  PrivacyMode privacy_mode = 1;
+  int32 hours_remaining_in_grace_period = 2;
+  bool is_enforced_by_team = 3;
+  bool is_not_migrated_to_server_source_of_truth = 4;
+  bool partner_data_share = 5;
+  bool has_acknowledged_grace_period_disclaimer = 6;
+}
+
+enum GithubArtifactPostingMode {
+  GITHUB_ARTIFACT_POSTING_MODE_UNSPECIFIED = 0;
+  GITHUB_ARTIFACT_POSTING_MODE_POST_ARTIFACT = 1;
+  GITHUB_ARTIFACT_POSTING_MODE_LINK_ONLY = 2;
+}
+
+message GithubIntegrationSettings {
+  bool hidden = 1;
+}
+
+message GitlabIntegrationSettings {
+  bool hidden = 1;
+}
+
+enum GitMode {
+  GIT_MODE_UNSPECIFIED = 0;
+  GIT_MODE_USER_CONTROLLED = 1;
+  GIT_MODE_ALWAYS_DISABLED = 2;
+}
+
+message GlassSettings {
+  repeated int32 allowed_user_ids = 1;
+  optional bool allow_all_team_members = 2;
+}
+
+message GrokBotAccountAutomationGroup {
+  string agent_id = 1;
+  repeated GrokBotAgentAutomation automations = 2;
+  bool unavailable = 3;
+  bool read_individually = 4;
+}
+
+message GrokBotAgent {
+  string id = 1;
+  string legacy_agent_id = 2;
+  string name = 3;
+  string description = 4;
+  string title = 5;
+  string avatar_shape = 6;
+  string avatar_color = 7;
+  optional string avatar_version = 8;
+  optional string avatar_url = 9;
+  int64 created_at_ms = 10;
+  int64 updated_at_ms = 11;
+  string agent_id = 12;
+  string harness = 13;
+  string role = 14;
+  optional GrokBotAgentVisibility visibility = 15;
+  optional int32 team_id = 16;
+  optional bool viewer_is_owner = 17;
+  string viewer_session_id = 18;
+  GrokBotAgentKind kind = 19;
+  repeated string member_agent_ids = 20;
+  optional string owner_display_name = 21;
+  repeated GrokBotRoomPerson people = 22;
+}
+
+message GrokBotAgentAutomation {
+  string automation_id = 1;
+  string record_json = 2;
+}
+
+message GrokBotAgentAwaitingState {
+  string tab_id = 1;
+  string reason = 2;
+  int64 since_ms = 3;
+}
+
+message GrokBotAgentClientState {
+  string agent_id = 1;
+  optional int64 last_viewed_at_ms = 2;
+  uint32 unread_count = 3;
+  optional int64 last_activity_at_ms = 4;
+  optional string last_entry_id = 5;
+  optional string last_entry_kind = 6;
+  optional string last_message_id = 7;
+  optional string last_message_preview = 8;
+  bool notifications_enabled = 9;
+  bool notify_on_updates_enabled = 10;
+  bool hidden_from_sidebar = 11;
+  int64 updated_at_ms = 12;
+}
+
+message GrokBotAgentDefinition {
+  repeated GrokBotAgentDefinitionSession sessions = 1;
+  repeated GrokBotAgentDefinitionAgentRef room_members = 2;
+  repeated GrokBotAgentDefinitionAgentRef member_of_rooms = 3;
+  repeated GrokBotAgentDefinitionTemplateImport template_imports = 4;
+  repeated GrokBotAgentDefinitionMemoryShard memory_shards = 5;
+  repeated GrokBotAgentAutomation routines = 6;
+  repeated GrokBotAgentDefinitionSkill recipe_skills = 7;
+  GrokBotUserMcpSettings mcp_settings = 8;
+  repeated GrokBotAgentDefinitionMcpServer mcp_servers = 9;
+}
+
+message GrokBotAgentDefinitionAgentRef {
+  string id = 1;
+  string agent_id = 2;
+  string name = 3;
+  string harness = 4;
+  string kind = 5;
+}
+
+message GrokBotAgentDefinitionIdentity {
+  string id = 1;
+  string agent_id = 2;
+  string legacy_agent_id = 3;
+  string auth_id = 4;
+  int32 user_id = 5;
+  string name = 6;
+  string description = 7;
+  string title = 8;
+  string role = 9;
+  string avatar_shape = 10;
+  string avatar_color = 11;
+  bool has_custom_avatar = 12;
+  string harness = 13;
+  string kind = 14;
+  string visibility = 15;
+  optional int32 team_id = 16;
+  int64 created_at_ms = 17;
+  int64 updated_at_ms = 18;
+  optional int64 deleted_at_ms = 19;
+  GrokBotAgentDefinitionSlack slack = 20;
+}
+
+message GrokBotAgentDefinitionMcpServer {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+  string scope = 4;
+  optional string plugin_id = 5;
+  int64 created_at_ms = 6;
+}
+
+message GrokBotAgentDefinitionMemoryShard {
+  string scope = 1;
+  string scope_key = 2;
+  uint32 version = 3;
+  bool box_backfilled = 4;
+  int64 updated_at_ms = 5;
+  GrokBotMemoryFolder folder = 6;
+}
+
+message GrokBotAgentDefinitionSession {
+  string session_id = 1;
+  string kind = 2;
+  int64 created_at_ms = 3;
+  int64 updated_at_ms = 4;
+  optional int64 last_activity_at_ms = 5;
+  string box_key = 6;
+}
+
+message GrokBotAgentDefinitionSkill {
+  string id = 1;
+  string description = 2;
+  string content = 3;
+}
+
+message GrokBotAgentDefinitionSlack {
+  bool linked = 1;
+  string app_id = 2;
+  string bot_user_id = 3;
+  string team_id = 4;
+  string workspace_name = 5;
+  optional int64 linked_at_ms = 6;
+  bool pending_admin_approval = 7;
+  bool pending_reinstall = 8;
+}
+
+message GrokBotAgentDefinitionTemplateImport {
+  string template_id = 1;
+  string template_version_id = 2;
+  string import_type = 3;
+  int64 imported_at_ms = 4;
+  string template_name = 5;
+  uint32 template_version = 6;
+  string share_id = 7;
+}
+
+enum GrokBotAgentHarnessKind {
+  GROK_BOT_AGENT_HARNESS_KIND_UNSPECIFIED = 0;
+  GROK_BOT_AGENT_HARNESS_KIND_BOX = 1;
+  GROK_BOT_AGENT_HARNESS_KIND_TEMPORAL = 2;
+}
+
+message GrokBotAgentInlinePlugin {
+  string name = 1;
+  string display_name = 2;
+  string description = 3;
+  string mcp_config_json = 4;
+}
+
+enum GrokBotAgentKind {
+  GROK_BOT_AGENT_KIND_UNSPECIFIED = 0;
+  GROK_BOT_AGENT_KIND_AGENT = 1;
+  GROK_BOT_AGENT_KIND_ROOM = 2;
+}
+
+message GrokBotAgentLiveActivity {
+  string kind = 1;
+  string tool = 2;
+  string detail = 3;
+  string target = 4;
+  string call_id = 5;
+}
+
+message GrokBotAgentLiveState {
+  string agent_id = 1;
+  bool is_running = 2;
+  bool is_composing_message = 3;
+  bool is_retrying = 4;
+  optional GrokBotAgentLiveActivity activity = 5;
+  optional GrokBotAgentAwaitingState awaiting = 6;
+  int64 updated_at_ms = 7;
+  int64 stale_after_ms = 8;
+  optional string box_handoff_request_id = 9;
+  optional string box_handoff_instruction = 10;
+  string session_id = 11;
+  optional string active_group_member_id = 12;
+  bool has_running_subagents = 13;
+}
+
+message GrokBotAgentMarketplace {
+  int64 marketplace_id = 1;
+  string display_name = 2;
+  string description = 3;
+}
+
+enum GrokBotAgentMessageDelivery {
+  GROK_BOT_AGENT_MESSAGE_DELIVERY_UNSPECIFIED = 0;
+  GROK_BOT_AGENT_MESSAGE_DELIVERY_DELIVERED_TEMPORAL = 1;
+  GROK_BOT_AGENT_MESSAGE_DELIVERY_DELIVERED_BOX = 2;
+  GROK_BOT_AGENT_MESSAGE_DELIVERY_DUPLICATE = 3;
+  GROK_BOT_AGENT_MESSAGE_DELIVERY_TARGET_NOT_FOUND = 4;
+  GROK_BOT_AGENT_MESSAGE_DELIVERY_FORBIDDEN = 5;
+  GROK_BOT_AGENT_MESSAGE_DELIVERY_BOX_UNREACHABLE = 6;
+  GROK_BOT_AGENT_MESSAGE_DELIVERY_TEMPORAL_UNAVAILABLE = 7;
+  GROK_BOT_AGENT_MESSAGE_DELIVERY_INVALID_TARGET = 8;
+}
+
+message GrokBotAgentPlugin {
+  int64 plugin_id = 1;
+  string name = 2;
+  string display_name = 3;
+  string description = 4;
+  optional string logo_url = 5;
+  bool owned_by_marketplace = 6;
+  string install_mode = 7;
+  repeated string variable_names = 8;
+  bool is_deprecated = 9;
+  optional string mcp_config_json = 10;
+  repeated GrokBotAgentPluginSkill skills = 11;
+  repeated string mcp_server_names = 12;
+  bool is_bot_skills = 13;
+  GrokBotConnectorType connector_type = 14;
+  optional string variables_json = 15;
+  bool has_configured_variables = 16;
+}
+
+message GrokBotAgentPluginConfigUpdate {
+  int64 plugin_id = 1;
+  string mcp_config_json = 2;
+}
+
+message GrokBotAgentPluginEntry {
+  oneof source {
+    int64 plugin_id = 1;
+    GrokBotAgentInlinePlugin inline = 2;
+    GrokBotAgentPluginConfigUpdate config_update = 3;
+  }
+}
+
+message GrokBotAgentPluginSkill {
+  string name = 1;
+  string description = 2;
+  string source_path = 3;
+  optional string source_url = 4;
+  optional string content = 5;
+  repeated string environments = 6;
+}
+
+message GrokBotAgentSession {
+  string agent_id = 1;
+  string session_id = 2;
+  GrokBotAgentSessionKind kind = 3;
+  int64 created_at_ms = 4;
+  int64 updated_at_ms = 5;
+  optional int64 last_activity_at_ms = 6;
+}
+
+enum GrokBotAgentSessionKind {
+  GROK_BOT_AGENT_SESSION_KIND_UNSPECIFIED = 0;
+  GROK_BOT_AGENT_SESSION_KIND_MAIN = 1;
+  GROK_BOT_AGENT_SESSION_KIND_SLACK_DM = 2;
+  GROK_BOT_AGENT_SESSION_KIND_SLACK_THREAD = 3;
+  GROK_BOT_AGENT_SESSION_KIND_DM = 4;
+  GROK_BOT_AGENT_SESSION_KIND_GROUP = 5;
+}
+
+message GrokBotAgentSkill {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string body = 4;
+  string source = 5;
+}
+
+enum GrokBotAgentVisibility {
+  GROK_BOT_AGENT_VISIBILITY_UNSPECIFIED = 0;
+  GROK_BOT_AGENT_VISIBILITY_OWNER = 1;
+  GROK_BOT_AGENT_VISIBILITY_TEAM = 2;
+}
+
+enum GrokBotAutoReviewApprovalResolution {
+  GROK_BOT_AUTO_REVIEW_APPROVAL_RESOLUTION_UNSPECIFIED = 0;
+  GROK_BOT_AUTO_REVIEW_APPROVAL_RESOLUTION_APPROVED = 1;
+  GROK_BOT_AUTO_REVIEW_APPROVAL_RESOLUTION_DENIED = 2;
+  GROK_BOT_AUTO_REVIEW_APPROVAL_RESOLUTION_ALWAYS = 3;
+}
+
+enum GrokBotBoxDiskPressureLevel {
+  GROK_BOT_BOX_DISK_PRESSURE_LEVEL_UNSPECIFIED = 0;
+  GROK_BOT_BOX_DISK_PRESSURE_LEVEL_NONE = 1;
+  GROK_BOT_BOX_DISK_PRESSURE_LEVEL_SOFT = 2;
+  GROK_BOT_BOX_DISK_PRESSURE_LEVEL_HARD = 3;
+}
+
+enum GrokBotBoxHandBackTrigger {
+  GROK_BOT_BOX_HAND_BACK_TRIGGER_UNSPECIFIED = 0;
+  GROK_BOT_BOX_HAND_BACK_TRIGGER_BUTTON = 1;
+  GROK_BOT_BOX_HAND_BACK_TRIGGER_VIEWER_CLOSED = 2;
+  GROK_BOT_BOX_HAND_BACK_TRIGGER_DISMISSED = 3;
+}
+
+enum GrokBotBoxHarnessMigrationPassState {
+  GROK_BOT_BOX_HARNESS_MIGRATION_PASS_STATE_UNSPECIFIED = 0;
+  GROK_BOT_BOX_HARNESS_MIGRATION_PASS_STATE_DISABLED = 1;
+  GROK_BOT_BOX_HARNESS_MIGRATION_PASS_STATE_DONE = 2;
+  GROK_BOT_BOX_HARNESS_MIGRATION_PASS_STATE_PENDING = 3;
+}
+
+message GrokBotBoxState {
+  SandBoxRunState run_state = 1;
+  bool recreate_in_flight = 2;
+  optional bool image_update_available = 3;
+  optional string host_version = 4;
+  optional bool host_update_available = 5;
+  GrokBotBoxDiskPressureLevel disk_pressure = 6;
+  int64 updated_at_ms = 7;
+}
+
+enum GrokBotClientSurface {
+  GROK_BOT_CLIENT_SURFACE_UNSPECIFIED = 0;
+  GROK_BOT_CLIENT_SURFACE_DESKTOP = 1;
+  GROK_BOT_CLIENT_SURFACE_MOBILE = 2;
+}
+
+message GrokBotComputerAction {
+  string agent_id = 1;
+  string type = 2;
+  double x = 3;
+  double y = 4;
+  string button = 5;
+  uint32 count = 6;
+  int64 at_ms = 7;
+}
+
+enum GrokBotConnectorType {
+  GROK_BOT_CONNECTOR_TYPE_UNSPECIFIED = 0;
+  GROK_BOT_CONNECTOR_TYPE_USER = 1;
+  GROK_BOT_CONNECTOR_TYPE_TEAM = 2;
+}
+
+enum GrokBotCredentialRequestResolution {
+  GROK_BOT_CREDENTIAL_REQUEST_RESOLUTION_UNSPECIFIED = 0;
+  GROK_BOT_CREDENTIAL_REQUEST_RESOLUTION_APPROVED = 1;
+  GROK_BOT_CREDENTIAL_REQUEST_RESOLUTION_DENIED = 2;
+}
+
+message GrokBotEmailDraft {
+  string from = 1;
+  repeated string to = 2;
+  repeated string cc = 3;
+  string subject = 4;
+  string body = 5;
+}
+
+enum GrokBotFeedbackAction {
+  GROK_BOT_FEEDBACK_ACTION_UNSPECIFIED = 0;
+  GROK_BOT_FEEDBACK_ACTION_UP = 1;
+  GROK_BOT_FEEDBACK_ACTION_DOWN = 2;
+  GROK_BOT_FEEDBACK_ACTION_SUBMIT = 3;
+  GROK_BOT_FEEDBACK_ACTION_REVERT = 4;
+}
+
+enum GrokBotFirstPartyTemplate {
+  GROK_BOT_FIRST_PARTY_TEMPLATE_UNSPECIFIED = 0;
+  GROK_BOT_FIRST_PARTY_TEMPLATE_SWE = 1;
+}
+
+message GrokBotHarnessMigrationAgentStatus {
+  string agent_row_id = 1;
+  string public_agent_id = 2;
+  string harness = 4;
+  string kind = 5;
+  int64 updated_at_ms = 6;
+}
+
+message GrokBotHarnessMigrationPassAgentResult {
+  string agent_row_id = 1;
+  string outcome = 2;
+  string deferral_reason = 3;
+  uint32 duration_ms = 4;
+  uint32 copied_blobs = 5;
+  uint64 copied_bytes = 6;
+  uint32 closure_blobs = 7;
+  uint32 prewarmed_blobs = 8;
+}
+
+message GrokBotHarnessMigrationPassStatus {
+  string workflow_id = 1;
+  string run_id = 2;
+  string status = 3;
+  int64 started_at_ms = 4;
+  int64 closed_at_ms = 5;
+  string skipped_reason = 6;
+  bool budget_exhausted = 7;
+  repeated GrokBotHarnessMigrationPassAgentResult agents = 8;
+}
+
+message GrokBotHarnessMigrationRolloutStatus {
+  bool migration_gate_enabled = 1;
+  bool identity_reads_enabled = 2;
+  string temporal_harness_mode = 3;
+  bool host_update_trigger_enabled = 4;
+  string ineligibility = 5;
+}
+
+message GrokBotHarnessRefusal {
+  string failure_code = 1;
+  string message = 2;
+}
+
+enum GrokBotLocalToolPermissionCardResolution {
+  GROK_BOT_LOCAL_TOOL_PERMISSION_CARD_RESOLUTION_UNSPECIFIED = 0;
+  GROK_BOT_LOCAL_TOOL_PERMISSION_CARD_RESOLUTION_ALLOW_ONCE = 1;
+  GROK_BOT_LOCAL_TOOL_PERMISSION_CARD_RESOLUTION_DENY = 2;
+  GROK_BOT_LOCAL_TOOL_PERMISSION_CARD_RESOLUTION_ALWAYS = 3;
+  GROK_BOT_LOCAL_TOOL_PERMISSION_CARD_RESOLUTION_NEVER = 4;
+}
+
+message GrokBotMarketplaceCategory {
+  int64 id = 1;
+  string name = 2;
+}
+
+message GrokBotMarketplaceCreator {
+  int64 id = 1;
+  string name = 2;
+  string profile_photo_url = 3;
+  map<string, string> handles = 4;
+  int64 created_at_ms = 5;
+  int64 updated_at_ms = 6;
+}
+
+message GrokBotMarketplaceDefaultAvatar {
+  string shape = 1;
+  string color = 2;
+}
+
+enum GrokBotMarketplaceImageKind {
+  GROK_BOT_MARKETPLACE_IMAGE_KIND_UNSPECIFIED = 0;
+  GROK_BOT_MARKETPLACE_IMAGE_KIND_BOT = 1;
+  GROK_BOT_MARKETPLACE_IMAGE_KIND_CREATOR = 2;
+}
+
+message GrokBotMarketplaceListing {
+  int64 id = 1;
+  int64 template_id = 2;
+  int64 pinned_template_version_id = 3;
+  string blob_object_key = 4;
+  string name = 5;
+  string description = 6;
+  oneof avatar {
+    string image_url = 7;
+    GrokBotMarketplaceDefaultAvatar default_avatar = 8;
+  }
+  GrokBotMarketplaceListingStatus status = 9;
+  string slug = 10;
+  string category = 11;
+  int64 created_at_ms = 14;
+  int64 updated_at_ms = 15;
+  int64 creator_id = 16;
+  string share_id = 17;
+  repeated GrokBotMarketplaceCategory categories = 18;
+}
+
+enum GrokBotMarketplaceListingStatus {
+  GROK_BOT_MARKETPLACE_LISTING_STATUS_UNSPECIFIED = 0;
+  GROK_BOT_MARKETPLACE_LISTING_STATUS_PENDING_REVIEW = 1;
+  GROK_BOT_MARKETPLACE_LISTING_STATUS_LISTED = 2;
+  GROK_BOT_MARKETPLACE_LISTING_STATUS_DELISTED = 3;
+}
+
+message GrokBotMemoryFolder {
+  string profile = 1;
+  map<string, string> logs = 2;
+}
+
+message GrokBotMemoryShard {
+  string agent_id = 1;
+  GrokBotAgentHarnessKind harness = 2;
+  GrokBotMemoryFolder folder = 3;
+  uint32 version = 4;
+}
+
+message GrokBotOrphanedSlackApp {
+  string agent_id = 1;
+  string auth_id = 2;
+  string owner_email = 3;
+  string slack_app_id = 4;
+  string slack_team_id = 5;
+  string slack_workspace_name = 6;
+  int64 deleted_at_ms = 7;
+}
+
+message GrokBotPinnedAgents {
+  repeated string agent_ids = 1;
+}
+
+message GrokBotPluginScope {
+  string agent_id = 1;
+  string session_kind = 2;
+}
+
+enum GrokBotRoomMemberTurnDispatch {
+  GROK_BOT_ROOM_MEMBER_TURN_DISPATCH_UNSPECIFIED = 0;
+  GROK_BOT_ROOM_MEMBER_TURN_DISPATCH_ACCEPTED = 1;
+  GROK_BOT_ROOM_MEMBER_TURN_DISPATCH_DUPLICATE = 2;
+  GROK_BOT_ROOM_MEMBER_TURN_DISPATCH_NOT_TEMPORAL = 3;
+  GROK_BOT_ROOM_MEMBER_TURN_DISPATCH_TARGET_NOT_FOUND = 4;
+  GROK_BOT_ROOM_MEMBER_TURN_DISPATCH_TEMPORAL_UNAVAILABLE = 5;
+}
+
+message GrokBotRoomMemberTurnMessage {
+  GrokBotRoomMemberTurnMessage.SpeakerKind speaker_kind = 1;
+  string speaker_name = 2;
+  bool is_self = 3;
+  string text = 4;
+  optional GrokBotRoomMemberTurnMessage.ReplyTarget reply_to = 5;
+
+  message ReplyTarget {
+    GrokBotRoomMemberTurnMessage.SpeakerKind speaker_kind = 1;
+    string speaker_name = 2;
+    bool is_self = 3;
+    string quote = 4;
+  }
+
+  enum SpeakerKind {
+    SPEAKER_KIND_UNSPECIFIED = 0;
+    SPEAKER_KIND_HUMAN = 1;
+    SPEAKER_KIND_AGENT = 2;
+  }
+}
+
+enum GrokBotRoomMemberTurnOutcome {
+  GROK_BOT_ROOM_MEMBER_TURN_OUTCOME_UNSPECIFIED = 0;
+  GROK_BOT_ROOM_MEMBER_TURN_OUTCOME_SENT = 1;
+  GROK_BOT_ROOM_MEMBER_TURN_OUTCOME_PASS = 2;
+  GROK_BOT_ROOM_MEMBER_TURN_OUTCOME_SKIPPED = 3;
+  GROK_BOT_ROOM_MEMBER_TURN_OUTCOME_TIMEOUT = 4;
+  GROK_BOT_ROOM_MEMBER_TURN_OUTCOME_CANCELLED = 5;
+  GROK_BOT_ROOM_MEMBER_TURN_OUTCOME_ERROR = 6;
+}
+
+message GrokBotRoomMemberTurnPeer {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+enum GrokBotRoomMemberTurnResultIntake {
+  GROK_BOT_ROOM_MEMBER_TURN_RESULT_INTAKE_UNSPECIFIED = 0;
+  GROK_BOT_ROOM_MEMBER_TURN_RESULT_INTAKE_ACCEPTED = 1;
+  GROK_BOT_ROOM_MEMBER_TURN_RESULT_INTAKE_UNKNOWN_NONCE = 2;
+  GROK_BOT_ROOM_MEMBER_TURN_RESULT_INTAKE_HOST_UNAVAILABLE = 3;
+}
+
+message GrokBotRoomMemberTurnRoom {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message GrokBotRoomPerson {
+  string display_name = 1;
+  optional string avatar_url = 2;
+  bool is_viewer = 3;
+}
+
+enum GrokBotRosterChangeKind {
+  GROK_BOT_ROSTER_CHANGE_KIND_UNSPECIFIED = 0;
+  GROK_BOT_ROSTER_CHANGE_KIND_AGENT_CREATED = 1;
+  GROK_BOT_ROSTER_CHANGE_KIND_AGENT_UPDATED = 2;
+  GROK_BOT_ROSTER_CHANGE_KIND_AGENT_DELETED = 3;
+  GROK_BOT_ROSTER_CHANGE_KIND_AGENT_VISIBILITY_CHANGED = 4;
+  GROK_BOT_ROSTER_CHANGE_KIND_ROOM_MEMBERS_CHANGED = 5;
+  GROK_BOT_ROSTER_CHANGE_KIND_SIDEBAR_VISIBILITY_CHANGED = 6;
+  GROK_BOT_ROSTER_CHANGE_KIND_USER_SETTINGS_CHANGED = 7;
+}
+
+message GrokBotRuntimeCapabilities {
+  bool durable_identity_enabled = 1;
+  bool durable_identity_writes_enabled = 2;
+  bool temporal_creation_enabled = 3;
+  bool agent_messaging_enabled = 4;
+  bool server_rooms_enabled = 5;
+}
+
+message GrokBotSecret {
+  string name = 1;
+  string description = 2;
+  int64 created_at_ms = 3;
+  int64 updated_at_ms = 4;
+}
+
+enum GrokBotSendStatus {
+  GROK_BOT_SEND_STATUS_UNSPECIFIED = 0;
+  GROK_BOT_SEND_STATUS_NOT_FOUND = 1;
+  GROK_BOT_SEND_STATUS_ACCEPTED = 2;
+  GROK_BOT_SEND_STATUS_REJECTED = 3;
+  GROK_BOT_SEND_STATUS_PENDING = 4;
+  GROK_BOT_SEND_STATUS_UNKNOWN_DURABILITY = 5;
+}
+
+message GrokBotSessionBox {
+  string agent_id = 1;
+  string session_id = 2;
+  string auth_id = 3;
+  string tenant_id = 4;
+  string store_id = 5;
+  int64 provisioned_at_ms = 6;
+  optional int64 last_activity_at_ms = 7;
+  optional int64 reap_claimed_at_ms = 8;
+  bool reap_claim_fresh = 9;
+  optional int64 deleted_at_ms = 10;
+  bool agent_deleted = 11;
+  GrokBotSessionBoxPodState pod_state = 12;
+  optional GrokBotSessionBoxPod pod = 13;
+  int32 pod_count = 14;
+  repeated string failed_clusters = 15;
+  GrokBotSessionBoxCredentialState credential_state = 16;
+  bool owner_missing = 17;
+  string lookup_error = 18;
+  string box_key = 19;
+  bool viewer_box = 20;
+}
+
+enum GrokBotSessionBoxCredentialState {
+  GROK_BOT_SESSION_BOX_CREDENTIAL_STATE_UNSPECIFIED = 0;
+  GROK_BOT_SESSION_BOX_CREDENTIAL_STATE_ABSENT = 1;
+  GROK_BOT_SESSION_BOX_CREDENTIAL_STATE_PRESENT = 2;
+  GROK_BOT_SESSION_BOX_CREDENTIAL_STATE_REVOKED = 3;
+}
+
+message GrokBotSessionBoxPod {
+  string cluster = 1;
+  string pod_id = 2;
+  string phase = 3;
+  int64 creation_timestamp_ms = 4;
+  optional int64 deletion_timestamp_ms = 5;
+  string node_id = 6;
+}
+
+enum GrokBotSessionBoxPodState {
+  GROK_BOT_SESSION_BOX_POD_STATE_UNSPECIFIED = 0;
+  GROK_BOT_SESSION_BOX_POD_STATE_ABSENT = 1;
+  GROK_BOT_SESSION_BOX_POD_STATE_REACHABLE = 2;
+  GROK_BOT_SESSION_BOX_POD_STATE_HIBERNATED = 3;
+  GROK_BOT_SESSION_BOX_POD_STATE_STARTING = 4;
+  GROK_BOT_SESSION_BOX_POD_STATE_UNKNOWN = 5;
+}
+
+message GrokBotSidebarSection {
+  string id = 1;
+  string name = 2;
+  repeated string agent_ids = 3;
+}
+
+message GrokBotSidebarSections {
+  repeated GrokBotSidebarSection sections = 1;
+}
+
+message GrokBotSlackAppRemoval {
+  string slack_app_id = 1;
+  string slack_team_id = 2;
+  string slack_workspace_name = 3;
+  string status = 4;
+  string slack_error = 5;
+}
+
+message GrokBotSlackConnection {
+  string agent_id = 1;
+  bool connected = 2;
+  optional string workspace_name = 3;
+  optional string install_url = 5;
+  optional string unavailable_reason = 6;
+  optional bool pending_admin_approval = 7;
+  optional bool needs_manifest_update = 8;
+  optional string reinstall_url = 9;
+}
+
+enum GrokBotSlackConnectOutcome {
+  GROK_BOT_SLACK_CONNECT_OUTCOME_UNSPECIFIED = 0;
+  GROK_BOT_SLACK_CONNECT_OUTCOME_STARTED = 1;
+  GROK_BOT_SLACK_CONNECT_OUTCOME_UNSUPPORTED_HARNESS = 2;
+}
+
+message GrokBotSlackDraft {
+  optional string workspace = 1;
+  string target = 2;
+  optional string thread = 3;
+  string body = 4;
+}
+
+enum GrokBotSlackInstallOutcome {
+  GROK_BOT_SLACK_INSTALL_OUTCOME_UNSPECIFIED = 0;
+  GROK_BOT_SLACK_INSTALL_OUTCOME_INSTALLED = 1;
+  GROK_BOT_SLACK_INSTALL_OUTCOME_PENDING_ADMIN_APPROVAL = 2;
+  GROK_BOT_SLACK_INSTALL_OUTCOME_NOT_CONNECTED = 3;
+  GROK_BOT_SLACK_INSTALL_OUTCOME_WORKSPACE_REQUIRED = 4;
+  GROK_BOT_SLACK_INSTALL_OUTCOME_MANAGER_REAUTH_REQUIRED = 5;
+  GROK_BOT_SLACK_INSTALL_OUTCOME_INSUFFICIENT_SCOPES = 6;
+  GROK_BOT_SLACK_INSTALL_OUTCOME_INSTALL_CONFLICT = 7;
+  GROK_BOT_SLACK_INSTALL_OUTCOME_RATELIMITED = 8;
+  GROK_BOT_SLACK_INSTALL_OUTCOME_SLACK_REJECTED = 9;
+  GROK_BOT_SLACK_INSTALL_OUTCOME_UNSUPPORTED_HARNESS = 10;
+}
+
+enum GrokBotSlackInstallStatus {
+  GROK_BOT_SLACK_INSTALL_STATUS_UNSPECIFIED = 0;
+  GROK_BOT_SLACK_INSTALL_STATUS_NOT_CONNECTED = 1;
+  GROK_BOT_SLACK_INSTALL_STATUS_APP_CREATED = 2;
+  GROK_BOT_SLACK_INSTALL_STATUS_CONNECTED = 3;
+  GROK_BOT_SLACK_INSTALL_STATUS_UNSUPPORTED_HARNESS = 4;
+}
+
+enum GrokBotSlackReinstallOutcome {
+  GROK_BOT_SLACK_REINSTALL_OUTCOME_UNSPECIFIED = 0;
+  GROK_BOT_SLACK_REINSTALL_OUTCOME_UPDATED = 1;
+  GROK_BOT_SLACK_REINSTALL_OUTCOME_UP_TO_DATE = 2;
+  GROK_BOT_SLACK_REINSTALL_OUTCOME_RECREATE_REQUIRED = 3;
+  GROK_BOT_SLACK_REINSTALL_OUTCOME_PENDING_ADMIN_APPROVAL = 4;
+  GROK_BOT_SLACK_REINSTALL_OUTCOME_NOT_CONNECTED = 5;
+  GROK_BOT_SLACK_REINSTALL_OUTCOME_MANAGER_REAUTH_REQUIRED = 6;
+  GROK_BOT_SLACK_REINSTALL_OUTCOME_INSUFFICIENT_SCOPES = 7;
+  GROK_BOT_SLACK_REINSTALL_OUTCOME_RATELIMITED = 8;
+  GROK_BOT_SLACK_REINSTALL_OUTCOME_SLACK_REJECTED = 9;
+  GROK_BOT_SLACK_REINSTALL_OUTCOME_UNSUPPORTED_HARNESS = 10;
+}
+
+enum GrokBotSlackUninstallOutcome {
+  GROK_BOT_SLACK_UNINSTALL_OUTCOME_UNSPECIFIED = 0;
+  GROK_BOT_SLACK_UNINSTALL_OUTCOME_REMOVED = 1;
+  GROK_BOT_SLACK_UNINSTALL_OUTCOME_NOT_CONNECTED = 2;
+  GROK_BOT_SLACK_UNINSTALL_OUTCOME_MANAGER_REAUTH_REQUIRED = 3;
+  GROK_BOT_SLACK_UNINSTALL_OUTCOME_RATELIMITED = 4;
+  GROK_BOT_SLACK_UNINSTALL_OUTCOME_SLACK_REJECTED = 5;
+  GROK_BOT_SLACK_UNINSTALL_OUTCOME_UNSUPPORTED_HARNESS = 6;
+}
+
+message GrokBotSlackWorkspace {
+  string slack_team_id = 1;
+  optional string slack_team_name = 2;
+  int64 manager_auth_updated_at_ms = 3;
+}
+
+message GrokBotStripeLinkPaymentMethod {
+  string id = 1;
+  string name = 2;
+  bool is_default = 3;
+  GrokBotStripeLinkPaymentMethodKind kind = 4;
+  optional string brand = 5;
+  optional string last4 = 6;
+  optional uint32 exp_month = 7;
+  optional uint32 exp_year = 8;
+}
+
+enum GrokBotStripeLinkPaymentMethodKind {
+  GROK_BOT_STRIPE_LINK_PAYMENT_METHOD_KIND_UNSPECIFIED = 0;
+  GROK_BOT_STRIPE_LINK_PAYMENT_METHOD_KIND_CARD = 1;
+  GROK_BOT_STRIPE_LINK_PAYMENT_METHOD_KIND_BANK_ACCOUNT = 2;
+}
+
+enum GrokBotStripeLinkPaymentMethodsOutcome {
+  GROK_BOT_STRIPE_LINK_PAYMENT_METHODS_OUTCOME_UNSPECIFIED = 0;
+  GROK_BOT_STRIPE_LINK_PAYMENT_METHODS_OUTCOME_OK = 1;
+  GROK_BOT_STRIPE_LINK_PAYMENT_METHODS_OUTCOME_NEEDS_AUTH = 2;
+  GROK_BOT_STRIPE_LINK_PAYMENT_METHODS_OUTCOME_UNAVAILABLE = 3;
+}
+
+message GrokBotTeamAgent {
+  GrokBotAgentDefinitionIdentity identity = 1;
+  string owner_email = 2;
+  optional int64 last_activity_at_ms = 3;
+  GrokBotTeamAgentSessionCounts sessions = 4;
+  GrokBotTeamAgentRoutineCounts routines = 5;
+  bool owner_multiplayer_gate = 6;
+}
+
+message GrokBotTeamAgentParticipant {
+  string session_id = 1;
+  string kind = 2;
+  optional int32 user_id = 3;
+  string user_email = 4;
+  string standing = 5;
+  string box_key = 6;
+  bool box_provisioned = 7;
+  int64 created_at_ms = 8;
+  optional int64 last_activity_at_ms = 9;
+}
+
+message GrokBotTeamAgentRoutineCounts {
+  int32 total = 1;
+  int32 teammate_created = 2;
+}
+
+message GrokBotTeamAgentSessionCounts {
+  int32 total = 1;
+  int32 teammate_dms = 2;
+  int32 slack_dms = 3;
+  int32 slack_threads = 4;
+  int32 boxes_provisioned = 5;
+}
+
+message GrokBotTeamAgentSharedBox {
+  string box_key = 1;
+  string kind = 2;
+  repeated string session_ids = 3;
+}
+
+message GrokBotTeamAgentSharedRoutine {
+  string automation_id = 1;
+  string name = 2;
+  bool enabled = 3;
+  string creator_auth_id = 4;
+  string creator_email = 5;
+  bool creator_is_owner = 6;
+  string session_id = 7;
+  string trigger_description = 8;
+  string prompt = 9;
+  int64 created_at_ms = 10;
+  optional int64 last_run_at_ms = 11;
+}
+
+message GrokBotTeamAgentSharedState {
+  repeated GrokBotTeamAgentParticipant participants = 1;
+  optional GrokBotAgentDefinitionMemoryShard agent_memory = 2;
+  optional GrokBotAgentMarketplace marketplace = 3;
+  repeated GrokBotAgentPlugin plugins = 4;
+  repeated GrokBotTeamAgentSharedRoutine routines = 5;
+  repeated GrokBotAgentDefinitionSkill recipe_skills = 6;
+  repeated GrokBotTeamAgentSharedBox boxes = 7;
+  bool participants_truncated = 8;
+}
+
+message GrokBotTemplate {
+  string share_id = 1;
+  string name = 2;
+  string avatar_shape = 3;
+  string avatar_color = 4;
+  optional string source_agent_id = 6;
+  int64 created_at_ms = 7;
+  int64 updated_at_ms = 8;
+  optional string blob_object_key = 9;
+  bool published = 10;
+  optional uint32 active_version = 11;
+  string description = 12;
+  GrokBotTemplateVisibility visibility = 13;
+  GrokBotTemplateOwnerType owner_type = 14;
+  optional string image_url = 15;
+}
+
+enum GrokBotTemplateOwnerType {
+  GROK_BOT_TEMPLATE_OWNER_TYPE_UNSPECIFIED = 0;
+  GROK_BOT_TEMPLATE_OWNER_TYPE_USER = 1;
+  GROK_BOT_TEMPLATE_OWNER_TYPE_TEAM = 2;
+}
+
+enum GrokBotTemplateVisibility {
+  GROK_BOT_TEMPLATE_VISIBILITY_UNSPECIFIED = 0;
+  GROK_BOT_TEMPLATE_VISIBILITY_PUBLIC = 1;
+  GROK_BOT_TEMPLATE_VISIBILITY_TEAM = 2;
+}
+
+enum GrokBotTemporalHarnessMode {
+  GROK_BOT_TEMPORAL_HARNESS_MODE_UNSPECIFIED = 0;
+  GROK_BOT_TEMPORAL_HARNESS_MODE_OFF = 1;
+  GROK_BOT_TEMPORAL_HARNESS_MODE_SHADOW = 2;
+  GROK_BOT_TEMPORAL_HARNESS_MODE_LIVE = 3;
+  GROK_BOT_TEMPORAL_HARNESS_MODE_BOX = 4;
+}
+
+message GrokBotTranscriptCursor {
+  string agent_id = 1;
+  uint32 generation = 2;
+  uint64 after_updated_seq = 3;
+  string session_id = 4;
+}
+
+message GrokBotTranscriptEntry {
+  uint64 seq = 1;
+  string entry_kind = 2;
+  optional bytes body = 3;
+  optional string blob_hash = 4;
+  uint64 updated_seq = 5;
+  optional string entry_id = 6;
+  bool body_omitted = 7;
+}
+
+message GrokBotTranscriptEntryDelete {
+  uint64 seq = 1;
+  uint64 updated_seq = 2;
+  optional string entry_id = 3;
+}
+
+message GrokBotTranscriptEntryRejection {
+  uint64 seq = 1;
+  uint64 current_updated_seq = 2;
+}
+
+message GrokBotTranscriptWatchAgentState {
+  repeated GrokBotAgentLiveState live = 1;
+  bool snapshot = 2;
+  repeated GrokBotAgentClientState client = 3;
+}
+
+message GrokBotTranscriptWatchAgentStateChanged {
+  string agent_id = 1;
+  repeated string families = 2;
+  int64 changed_at_ms = 3;
+}
+
+message GrokBotTranscriptWatchBoxState {
+  GrokBotBoxState state = 1;
+  bool snapshot = 2;
+}
+
+message GrokBotTranscriptWatchCleared {
+  string agent_id = 1;
+  uint32 new_generation = 2;
+  string session_id = 3;
+}
+
+message GrokBotTranscriptWatchComputerActions {
+  repeated GrokBotComputerAction actions = 1;
+}
+
+message GrokBotTranscriptWatchConnected {
+  string stream_id = 1;
+  int64 server_time_ms = 2;
+  int64 absolute_lifetime_ms = 3;
+}
+
+message GrokBotTranscriptWatchCursorTooOld {
+  string agent_id = 1;
+  uint32 generation = 2;
+  string session_id = 3;
+}
+
+message GrokBotTranscriptWatchFrame {
+  oneof frame {
+    GrokBotTranscriptWatchConnected connected = 1;
+    GrokBotTranscriptWatchRows rows = 2;
+    GrokBotTranscriptWatchCleared cleared = 3;
+    GrokBotTranscriptWatchCursorTooOld cursor_too_old = 4;
+    GrokBotTranscriptWatchHeartbeat heartbeat = 5;
+    GrokBotTranscriptWatchAgentState agent_state = 6;
+    GrokBotTranscriptWatchComputerActions computer_actions = 7;
+    GrokBotTranscriptWatchAgentStateChanged agent_state_changed = 8;
+    GrokBotTranscriptWatchTurnFailed turn_failed = 9;
+    GrokBotTranscriptWatchRosterChanged roster_changed = 10;
+    GrokBotTranscriptWatchBoxState box_state = 11;
+  }
+}
+
+message GrokBotTranscriptWatchHeartbeat {
+  int64 server_time_ms = 1;
+}
+
+message GrokBotTranscriptWatchRosterChanged {
+  GrokBotRosterChangeKind kind = 1;
+  string agent_id = 2;
+  int64 changed_at_ms = 3;
+  optional GrokBotAgent agent = 4;
+  repeated GrokBotUserSettingsField changed_fields = 5;
+}
+
+message GrokBotTranscriptWatchRows {
+  string agent_id = 1;
+  uint32 generation = 2;
+  repeated GrokBotTranscriptEntry entries = 3;
+  repeated GrokBotTranscriptEntryDelete deletes = 4;
+  bool replay = 5;
+  string session_id = 6;
+}
+
+message GrokBotTranscriptWatchTurnFailed {
+  string agent_id = 1;
+  string session_id = 2;
+  string turn_id = 3;
+  GrokBotTurnFailureCode code = 4;
+  string summary = 5;
+  int64 failed_at_ms = 6;
+}
+
+enum GrokBotTurnFailureCode {
+  GROK_BOT_TURN_FAILURE_CODE_UNSPECIFIED = 0;
+  GROK_BOT_TURN_FAILURE_CODE_INTERNAL = 1;
+  GROK_BOT_TURN_FAILURE_CODE_TIMEOUT = 2;
+  GROK_BOT_TURN_FAILURE_CODE_USAGE_LIMIT = 3;
+  GROK_BOT_TURN_FAILURE_CODE_RATE_LIMIT = 4;
+}
+
+message GrokBotUserAutoReviewInstructions {
+  bool is_enabled = 1;
+  repeated string allow_instructions = 2;
+  repeated string block_instructions = 3;
+}
+
+message GrokBotUserComputerCancel {
+}
+
+message GrokBotUserComputerCapabilities {
+  optional bool messages_op = 1;
+  optional int32 messages_op_generation = 2;
+  optional bool local_standing_grants = 3;
+}
+
+message GrokBotUserComputerClientMessage {
+  string message_json = 1;
+}
+
+message GrokBotUserComputerControlMessage {
+  string message_json = 1;
+  optional string cwd_state = 2;
+}
+
+message GrokBotUserComputerDownload {
+  string path = 1;
+  optional string approval_id = 2;
+  bool authorized_by_standing = 3;
+  bool authorized_by_approval = 4;
+}
+
+message GrokBotUserComputerExec {
+  string server_message_json = 1;
+  optional string approval_id = 2;
+  bool authorized_by_standing = 3;
+  bool authorized_by_approval = 4;
+}
+
+message GrokBotUserComputerFile {
+  bytes data = 1;
+  uint32 seq = 2;
+  bool last = 3;
+}
+
+message GrokBotUserComputerFileError {
+  string error = 1;
+}
+
+message GrokBotUserComputerHello {
+  string label = 1;
+  string local_root = 2;
+  string terminals_folder = 3;
+  string standing = 4;
+  bool supervised = 5;
+  string variant = 6;
+  bool server_authoritative = 7;
+  GrokBotUserComputerCapabilities capabilities = 8;
+}
+
+message GrokBotUserComputerMessagesAccepted {
+}
+
+message GrokBotUserComputerMessagesConsentResult {
+  GrokBotUserComputerMessagesConsentVerdict verdict = 1;
+  optional string reason = 2;
+}
+
+enum GrokBotUserComputerMessagesConsentVerdict {
+  GROK_BOT_USER_COMPUTER_MESSAGES_CONSENT_VERDICT_UNSPECIFIED = 0;
+  GROK_BOT_USER_COMPUTER_MESSAGES_CONSENT_VERDICT_STANDING = 1;
+  GROK_BOT_USER_COMPUTER_MESSAGES_CONSENT_VERDICT_ASK = 2;
+  GROK_BOT_USER_COMPUTER_MESSAGES_CONSENT_VERDICT_REFUSED = 3;
+}
+
+message GrokBotUserComputerMessagesError {
+  string error = 1;
+}
+
+message GrokBotUserComputerMessagesOp {
+  string op_json = 1;
+  optional string approval_id = 2;
+  optional string send_key = 3;
+}
+
+message GrokBotUserComputerMessagesResult {
+  string result_json = 1;
+}
+
+message GrokBotUserComputerPresence {
+  string machine_id = 1;
+  GrokBotUserComputerHello hello = 2;
+  int64 last_seen_at_ms = 3;
+}
+
+message GrokBotUserComputerQueuedRequest {
+  string id = 1;
+  GrokBotUserComputerRequestFrame frame = 2;
+  int64 enqueued_at_ms = 3;
+}
+
+message GrokBotUserComputerRequestFrame {
+  string request_id = 1;
+  oneof frame {
+    GrokBotUserComputerExec exec = 2;
+    GrokBotUserComputerUpload upload = 3;
+    GrokBotUserComputerDownload download = 4;
+    GrokBotUserComputerRetireApproval retire_approval = 5;
+    GrokBotUserComputerCancel cancel = 6;
+    GrokBotUserComputerMessagesOp messages_op = 7;
+  }
+}
+
+message GrokBotUserComputerResponseFrame {
+  string request_id = 1;
+  oneof frame {
+    GrokBotUserComputerClientMessage client = 2;
+    GrokBotUserComputerControlMessage control = 3;
+    GrokBotUserComputerFile file = 4;
+    GrokBotUserComputerFileError file_error = 5;
+    GrokBotUserComputerMessagesResult messages_result = 6;
+    GrokBotUserComputerMessagesError messages_error = 7;
+    GrokBotUserComputerMessagesConsentResult messages_consent_result = 8;
+    GrokBotUserComputerMessagesAccepted messages_accepted = 9;
+  }
+}
+
+message GrokBotUserComputerRetireApproval {
+  string approval_id = 1;
+}
+
+message GrokBotUserComputerUpload {
+  string path = 1;
+  optional string approval_id = 2;
+  bytes data = 3;
+  bool authorized_by_standing = 4;
+  bool authorized_by_approval = 5;
+}
+
+enum GrokBotUserFormClientPlatform {
+  GROK_BOT_USER_FORM_CLIENT_PLATFORM_UNSPECIFIED = 0;
+  GROK_BOT_USER_FORM_CLIENT_PLATFORM_DESKTOP = 1;
+  GROK_BOT_USER_FORM_CLIENT_PLATFORM_IOS = 2;
+  GROK_BOT_USER_FORM_CLIENT_PLATFORM_ANDROID = 3;
+}
+
+enum GrokBotUserFormDismissMode {
+  GROK_BOT_USER_FORM_DISMISS_MODE_UNSPECIFIED = 0;
+  GROK_BOT_USER_FORM_DISMISS_MODE_DISMISSED = 1;
+  GROK_BOT_USER_FORM_DISMISS_MODE_ESCALATED = 2;
+}
+
+message GrokBotUserFormVaultEntry {
+  string entry_id = 1;
+  string kind = 2;
+  string label = 3;
+  optional string extra_key = 4;
+  string value = 5;
+  int64 created_at_ms = 6;
+  int64 last_used_at_ms = 7;
+  optional string origin_host = 8;
+}
+
+message GrokBotUserFormVaultKey {
+  string extra_key = 1;
+  optional string origin_host = 2;
+}
+
+message GrokBotUserMcpServerSettings {
+  string server_id = 1;
+  optional string custom_instructions = 2;
+  repeated string disabled_tools = 3;
+}
+
+message GrokBotUserMcpSettings {
+  repeated GrokBotUserMcpServerSettings servers = 1;
+  map<string, string> custom_instructions_by_name = 2;
+  optional string user_time_zone = 3;
+  optional string user_time_zone_override = 4;
+  int64 updated_at_ms = 5;
+  optional GrokBotUserAutoReviewInstructions auto_review_instructions = 6;
+}
+
+enum GrokBotUserMessageDelivery {
+  GROK_BOT_USER_MESSAGE_DELIVERY_UNSPECIFIED = 0;
+  GROK_BOT_USER_MESSAGE_DELIVERY_ACCEPTED_BOX = 1;
+  GROK_BOT_USER_MESSAGE_DELIVERY_ACCEPTED_TEMPORAL = 2;
+  GROK_BOT_USER_MESSAGE_DELIVERY_DUPLICATE = 3;
+  GROK_BOT_USER_MESSAGE_DELIVERY_REFUSED = 4;
+}
+
+message GrokBotUserRuntimeSettings {
+  int64 updated_at_ms = 5;
+  optional GrokBotPinnedAgents pinned_agents = 6;
+  optional GrokBotSidebarSections sidebar_sections = 7;
+  optional bool has_seen_onboarding = 8;
+}
+
+enum GrokBotUserSettingsField {
+  GROK_BOT_USER_SETTINGS_FIELD_UNSPECIFIED = 0;
+  GROK_BOT_USER_SETTINGS_FIELD_MCP_SERVERS = 1;
+  GROK_BOT_USER_SETTINGS_FIELD_TIME_ZONE = 2;
+  GROK_BOT_USER_SETTINGS_FIELD_AUTO_REVIEW = 3;
+  GROK_BOT_USER_SETTINGS_FIELD_PINNED_AGENTS = 4;
+  GROK_BOT_USER_SETTINGS_FIELD_SIDEBAR_SECTIONS = 5;
+  GROK_BOT_USER_SETTINGS_FIELD_HAS_SEEN_ONBOARDING = 6;
+}
+
+enum GrokBotVirtualCardOutcome {
+  GROK_BOT_VIRTUAL_CARD_OUTCOME_UNSPECIFIED = 0;
+  GROK_BOT_VIRTUAL_CARD_OUTCOME_APPROVED = 1;
+  GROK_BOT_VIRTUAL_CARD_OUTCOME_DENIED = 2;
+  GROK_BOT_VIRTUAL_CARD_OUTCOME_NEEDS_AUTH = 3;
+  GROK_BOT_VIRTUAL_CARD_OUTCOME_FAILED = 4;
+}
+
+enum GrokBotVirtualCardRaiseOutcome {
+  GROK_BOT_VIRTUAL_CARD_RAISE_OUTCOME_UNSPECIFIED = 0;
+  GROK_BOT_VIRTUAL_CARD_RAISE_OUTCOME_RAISED = 1;
+  GROK_BOT_VIRTUAL_CARD_RAISE_OUTCOME_ALREADY_PENDING = 2;
+}
+
+enum GrokBotVirtualCardResolution {
+  GROK_BOT_VIRTUAL_CARD_RESOLUTION_UNSPECIFIED = 0;
+  GROK_BOT_VIRTUAL_CARD_RESOLUTION_APPROVED = 1;
+  GROK_BOT_VIRTUAL_CARD_RESOLUTION_DENIED = 2;
+}
+
+message HookDescriptor {
+  string name = 1;
+  optional string description = 2;
+  optional string source_path = 3;
+  optional string source_url = 4;
+}
+
+message IngestConversationRequest {
+  string conversation_id = 1;
+  string transcript = 2;
+  optional string transcript_json = 3;
+  optional string mode = 4;
+  optional string model = 5;
+  int64 last_updated_at = 6;
+}
+
+message IngestConversationResponse {
+  bool success = 1;
+  optional string summary = 2;
+  optional string detailed_summary = 3;
+  optional string error_message = 4;
+}
+
+message InstallGrokBotSlackAppRequest {
+  string agent_id = 1;
+  optional string slack_team_id = 2;
+}
+
+message InstallGrokBotSlackAppResponse {
+  GrokBotSlackInstallOutcome outcome = 1;
+  optional string slack_team_id = 2;
+  optional string workspace_name = 3;
+  optional string oauth_authorize_url = 4;
+  repeated GrokBotSlackWorkspace workspaces = 5;
+  optional string slack_error = 6;
+  optional uint32 retry_after_seconds = 7;
+  optional bool approval_request_filed = 8;
+  optional bool app_removed = 9;
+}
+
+message InstallUserPluginRequest {
+  int64 plugin_id = 1;
+  optional string pinned_git_ref = 4;
+  .google.protobuf.Struct variables = 5;
+}
+
+message InstallUserPluginResponse {
+  UserPluginInstall install = 1;
+}
+
+message InterruptGrokBotAgentRunRequest {
+  string agent_id = 1;
+  string reason = 2;
+  optional string session_id = 3;
+}
+
+message InterruptGrokBotAgentRunResponse {
+  bool had_active_run = 1;
+}
+
+message InvalidateGrokBotUserSkillsCacheRequest {
+}
+
+message InvalidateGrokBotUserSkillsCacheResponse {
+}
+
+message IssueGrokBotUserComputerCredentialRequest {
+  string machine_id = 1;
+}
+
+message IssueGrokBotUserComputerCredentialResponse {
+  string credential = 1;
+  int64 expires_at_ms = 2;
+  bool server_authoritative = 3;
+}
+
+message JiraIntegrationSettings {
+  bool hidden = 1;
+}
+
+message KillTeamMemberSandBoxRequest {
+  int32 team_id = 1;
+  int32 user_id = 2;
+  string pod_id = 3;
+  string cluster = 4;
+}
+
+message KillTeamMemberSandBoxResponse {
+  bool killed = 1;
+  string reason = 2;
+  uint32 deleted_count = 3;
+}
+
+message LinearIntegrationSettings {
+  bool hidden = 1;
+}
+
+message ListGrokBotAccountAutomationsRequest {
+  optional string time_zone = 1;
+  repeated string agent_ids = 2;
+}
+
+message ListGrokBotAccountAutomationsResponse {
+  repeated GrokBotAccountAutomationGroup agents = 1;
+}
+
+message ListGrokBotAgentAutomationsRequest {
+  string agent_id = 1;
+  optional string time_zone = 2;
+}
+
+message ListGrokBotAgentAutomationsResponse {
+  repeated GrokBotAgentAutomation automations = 1;
+}
+
+message ListGrokBotAgentSessionsRequest {
+  string agent_id = 1;
+}
+
+message ListGrokBotAgentSessionsResponse {
+  repeated GrokBotAgentSession sessions = 1;
+}
+
+message ListGrokBotAgentSkillsRequest {
+  string agent_id = 1;
+}
+
+message ListGrokBotAgentSkillsResponse {
+  repeated GrokBotAgentSkill skills = 1;
+}
+
+message ListGrokBotAgentsRequest {
+  optional string role = 1;
+  optional bool include_team_agents = 2;
+}
+
+message ListGrokBotAgentsResponse {
+  repeated GrokBotAgent agents = 1;
+  repeated GrokBotSlackConnection slack_connections = 2;
+}
+
+message ListGrokBotAgentTodosRequest {
+  string agent_id = 1;
+}
+
+message ListGrokBotAgentTodosResponse {
+  repeated .agent.v1.TodoItem todos = 1;
+}
+
+message ListGrokBotMarketplaceCategoriesInternalRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListGrokBotMarketplaceCategoriesInternalResponse {
+  repeated GrokBotMarketplaceCategory categories = 1;
+  string next_page_token = 2;
+}
+
+message ListGrokBotMarketplaceCreatorsInternalRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListGrokBotMarketplaceCreatorsInternalResponse {
+  repeated GrokBotMarketplaceCreator creators = 1;
+  string next_page_token = 2;
+}
+
+message ListGrokBotMarketplaceListingsInternalRequest {
+  optional GrokBotMarketplaceListingStatus status = 1;
+  optional string category = 2;
+  optional int64 template_id = 3;
+  int32 page_size = 4;
+  string page_token = 5;
+}
+
+message ListGrokBotMarketplaceListingsInternalResponse {
+  repeated GrokBotMarketplaceListing listings = 1;
+  string next_page_token = 2;
+}
+
+message ListGrokBotMemoryShardsRequest {
+}
+
+message ListGrokBotMemoryShardsResponse {
+  repeated GrokBotMemoryShard shards = 1;
+}
+
+message ListGrokBotSecretsRequest {
+  string id = 1;
+}
+
+message ListGrokBotSecretsResponse {
+  repeated GrokBotSecret secrets = 1;
+}
+
+message ListGrokBotStripeLinkPaymentMethodsRequest {
+}
+
+message ListGrokBotStripeLinkPaymentMethodsResponse {
+  GrokBotStripeLinkPaymentMethodsOutcome outcome = 1;
+  repeated GrokBotStripeLinkPaymentMethod payment_methods = 2;
+  uint32 unavailable_count = 3;
+}
+
+message ListGrokBotTemplatesRequest {
+}
+
+message ListGrokBotTemplatesResponse {
+  repeated GrokBotTemplate templates = 1;
+  optional string export_policy = 2;
+}
+
+message ListGrokBotTranscriptEntriesRequest {
+  string agent_id = 1;
+  optional uint32 generation = 2;
+  optional uint64 before_seq = 3;
+  uint32 limit = 4;
+  string session_id = 5;
+}
+
+message ListGrokBotTranscriptEntriesResponse {
+  repeated GrokBotTranscriptEntry entries = 1;
+  uint32 generation = 2;
+}
+
+message ListGrokBotUserComputersRequest {
+}
+
+message ListGrokBotUserComputersResponse {
+  repeated GrokBotUserComputerPresence computers = 1;
+}
+
+message ListGrokBotUserFormVaultEntriesRequest {
+}
+
+message ListGrokBotUserFormVaultEntriesResponse {
+  repeated GrokBotUserFormVaultEntry entries = 1;
+}
+
+message ListGrokBotUserFormVaultKeysRequest {
+}
+
+message ListGrokBotUserFormVaultKeysResponse {
+  repeated GrokBotUserFormVaultKey keys = 1;
+}
+
+message ListMarketplacePluginsRequest {
+  optional string search = 1;
+  repeated string tags = 2;
+  optional int32 page_size = 3;
+  optional string page_token = 4;
+  optional int64 marketplace_id = 5;
+  optional int64 publisher_id = 6;
+  optional bool skip_team_admin_filter = 7;
+  optional bool exclude_cloud_agent_plugins = 8;
+}
+
+message ListMarketplacePluginsResponse {
+  repeated Plugin plugins = 1;
+  optional string next_page_token = 2;
+  bool has_more = 3;
+}
+
+message ListMarketplacesRequest {
+}
+
+message ListMarketplacesResponse {
+  repeated Marketplace marketplaces = 1;
+}
+
+message ListPublicGrokBotMarketplaceListingsRequest {
+  optional string category = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListPublicGrokBotMarketplaceListingsResponse {
+  repeated PublicGrokBotMarketplaceListing featured_listings = 1;
+  repeated PublicGrokBotMarketplaceListing listings = 2;
+  string next_page_token = 3;
+  repeated string all_categories_order = 4;
+}
+
+message ListSandBoxesRequest {
+}
+
+message ListSandBoxesResponse {
+  repeated SandBoxDescriptor boxes = 1;
+}
+
+message ListSandBoxStoreObjectsRequest {
+  string prefix = 1;
+  string cursor = 2;
+  int32 max_entries = 3;
+}
+
+message ListSandBoxStoreObjectsResponse {
+  repeated SandBoxStoreObjectEntry entries = 1;
+  string next_cursor = 2;
+  bool truncated = 3;
+}
+
+message ListSandMachinesRequest {
+}
+
+message ListSandMachinesResponse {
+  repeated SandMachine machines = 1;
+}
+
+message ListSandMcpToolsRequest {
+  repeated string server_identifiers = 1;
+  optional string mcp_config_json = 2;
+  optional GrokBotPluginScope grok_bot_plugin_scope = 3;
+}
+
+message ListSandMcpToolsResponse {
+  repeated ListSandMcpToolsResponse.Server servers = 1;
+
+  message Server {
+    string server_identifier = 1;
+    string status = 2;
+    repeated .agent.v1.McpToolDefinition tools = 3;
+    string account_label = 4;
+    string row_server_identifier = 5;
+    McpServedBy served_by = 6;
+  }
+}
+
+message ListSandSetupManifestsRequest {
+}
+
+message ListSandSetupManifestsResponse {
+  uint32 schema_version = 1;
+  repeated SandAssignedSetupManifest manifests = 2;
+}
+
+message ListTeamMemberSandBoxesRequest {
+  int32 team_id = 1;
+  int32 user_id = 2;
+}
+
+message ListTeamMemberSandBoxesResponse {
+  int32 user_id = 1;
+  string email = 2;
+  string name = 3;
+  repeated TeamMemberSandBoxPod boxes = 4;
+  bool scan_incomplete = 5;
+}
+
+message ListTeamSandSetupManifestsRequest {
+}
+
+message ListTeamSandSetupManifestsResponse {
+  string team_id = 1;
+  bool can_manage = 2;
+  repeated SandTeamSetupManifest manifests = 3;
+}
+
+message ListUserCanvasesRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  bool shared_only = 3;
+}
+
+message ListUserCanvasesResponse {
+  optional string store_id = 1;
+  repeated CloudCanvasMetadata canvases = 2;
+  optional string next_page_token = 3;
+}
+
+enum LlmGatewayAuthMode {
+  LLM_GATEWAY_AUTH_MODE_UNSPECIFIED = 0;
+  LLM_GATEWAY_AUTH_MODE_JWT_ACCESS = 1;
+  LLM_GATEWAY_AUTH_MODE_CUSTOMER_MANAGED = 2;
+}
+
+enum LlmGatewayCredentialSourceStrategy {
+  LLM_GATEWAY_CREDENTIAL_SOURCE_STRATEGY_UNSPECIFIED = 0;
+  LLM_GATEWAY_CREDENTIAL_SOURCE_STRATEGY_TEAM_CREDENTIAL_ALL_SURFACES = 1;
+  LLM_GATEWAY_CREDENTIAL_SOURCE_STRATEGY_CLIENT_LOCAL_TEAM_CLOUD = 2;
+}
+
+message LlmGatewayRoutedModelEntry {
+  bool enabled = 1;
+}
+
+message LlmGatewayRouting {
+  map<string, LlmGatewayRoutingProviderEntry> providers = 1;
+}
+
+message LlmGatewayRoutingProviderEntry {
+  bool enabled = 1;
+  map<string, LlmGatewayRoutedModelEntry> models = 2;
+}
+
+message LlmGatewaySettings {
+  bool enabled = 1;
+  map<string, string> endpoints = 2;
+  string audience = 3;
+  LlmGatewayRouting routing = 4;
+  bool can_enable = 5;
+  LlmGatewayAuthMode auth_mode = 6;
+  LlmGatewayTeamCredentialStatus team_credential_status = 7;
+  LlmGatewayCredentialSourceStrategy credential_source_strategy = 8;
+  map<string, string> outbound_model_prefixes = 9;
+  map<string, string> outbound_model_rewrites = 10;
+}
+
+message LlmGatewayTeamCredentialStatus {
+  bool configured = 1;
+}
+
+message LocalToolControls {
+  LocalToolPermissionCeiling permission_ceiling = 1;
+}
+
+enum LocalToolPermissionCeiling {
+  LOCAL_TOOL_PERMISSION_CEILING_UNSPECIFIED = 0;
+  LOCAL_TOOL_PERMISSION_CEILING_NEVER = 1;
+  LOCAL_TOOL_PERMISSION_CEILING_ASK = 2;
+  LOCAL_TOOL_PERMISSION_CEILING_ALWAYS = 3;
+}
+
+message ManagedSkill {
+  string id = 1;
+  string description = 2;
+  string content = 3;
+  bool disable_model_invocation = 4;
+  repeated string environments = 5;
+  repeated string disabled_environments = 6;
+  optional bool enabled = 7;
+  optional .agent.v1.CustomModeDescriptor custom_mode = 8;
+  map<string, string> resources = 9;
+}
+
+message Marketplace {
+  int64 id = 1;
+  string name = 2;
+  optional string display_name = 3;
+  optional string description = 4;
+  string git_url = 5;
+  optional string git_ref = 6;
+  optional int32 user_id = 7;
+  optional int32 team_id = 8;
+  optional string logo_url = 9;
+  int64 created_at = 10;
+  int64 updated_at = 11;
+  optional int64 last_indexed_at = 12;
+  optional string last_indexed_commit_sha = 13;
+  optional TeamMarketplaceConfig team_config = 14;
+  repeated MarketplaceRequiredPluginInstall required_plugin_installs = 15;
+  bool auto_reindex = 16;
+  optional string distribution_git_url = 17;
+  bool is_default = 18;
+  bool allow_user_publish = 19;
+}
+
+message MarketplaceAccessGrant {
+  MarketplaceAccessPrincipalKind principal_kind = 1;
+  string principal_id = 2;
+}
+
+enum MarketplaceAccessPrincipalKind {
+  MARKETPLACE_ACCESS_PRINCIPAL_KIND_UNSPECIFIED = 0;
+  MARKETPLACE_ACCESS_PRINCIPAL_KIND_USER = 1;
+  MARKETPLACE_ACCESS_PRINCIPAL_KIND_TEAM_MEMBER_GROUP = 2;
+  MARKETPLACE_ACCESS_PRINCIPAL_KIND_TEAM_ADMIN_GROUP = 3;
+  MARKETPLACE_ACCESS_PRINCIPAL_KIND_GROUP = 4;
+}
+
+message MarketplaceRequiredPluginInstall {
+  int64 plugin_id = 1;
+  repeated int64 directory_group_ids = 2;
+}
+
+message MCPControls {
+  bool enabled = 1;
+  repeated string allowed_tools = 2;
+}
+
+message McpDescriptor {
+  string name = 1;
+  optional string description = 2;
+  optional string source_path = 3;
+  optional string source_url = 4;
+}
+
+enum McpServedBy {
+  MCP_SERVED_BY_UNSPECIFIED = 0;
+  MCP_SERVED_BY_CURSOR = 1;
+  MCP_SERVED_BY_GROK = 2;
+}
+
+message McpServerMetadata {
+  optional int64 plugin_id = 1;
+  int64 server_id = 2;
+}
+
+message MintSandVoiceCallSecretRequest {
+  string model = 1;
+}
+
+message MintSandVoiceCallSecretResponse {
+  string client_secret = 1;
+  int64 expires_at_unix_seconds = 2;
+  string model = 3;
+  string websocket_url = 4;
+}
+
+message ModelAllowlist {
+  ModelAllowlist.DefaultBehavior new_provider_default = 1;
+  ModelAllowlist.DefaultBehavior new_model_default = 2;
+  map<string, ModelAllowlistProviderEntry> providers = 3;
+  optional ModelAllowlistByok byok = 4;
+  optional int64 new_model_default_enabled_at = 5;
+  optional ModelAllowlist.FirstPartyModelDefault new_first_party_model_default = 6;
+  optional bool can_set_first_party_default_manually = 7;
+  optional int64 new_first_party_model_default_enabled_at = 8;
+  repeated FirstPartyPendingModel first_party_pending_models = 9;
+
+  enum DefaultBehavior {
+    DEFAULT_BEHAVIOR_UNSPECIFIED = 0;
+    DEFAULT_BEHAVIOR_ENABLED = 1;
+    DEFAULT_BEHAVIOR_DISABLED = 2;
+  }
+
+  enum FirstPartyModelDefault {
+    FIRST_PARTY_MODEL_DEFAULT_UNSPECIFIED = 0;
+    FIRST_PARTY_MODEL_DEFAULT_IMMEDIATELY = 1;
+    FIRST_PARTY_MODEL_DEFAULT_AFTER_7_DAYS = 2;
+    FIRST_PARTY_MODEL_DEFAULT_MANUALLY = 3;
+  }
+}
+
+message ModelAllowlistByok {
+  optional ModelAllowlistByokEntry openai = 1;
+  optional ModelAllowlistByokEntry anthropic = 2;
+  optional ModelAllowlistByokEntry google = 3;
+  optional ModelAllowlistByokEntry azure = 4;
+  optional ModelAllowlistByokEntry bedrock = 5;
+}
+
+message ModelAllowlistByokEntry {
+  bool enabled = 1;
+  repeated string models = 2;
+}
+
+message ModelAllowlistModelEntry {
+  bool enabled = 1;
+  map<string, ModelAllowlistParameterRestriction> parameter_restrictions = 2;
+  map<string, ModelAllowlistParameterGrant> parameter_grants = 3;
+  repeated TeamAdminModelRef.ModelParameterValue default_parameter_values = 4;
+}
+
+message ModelAllowlistParameterGrant {
+  repeated string granted_values = 1;
+}
+
+message ModelAllowlistParameterRestriction {
+  repeated string allowed_values = 1;
+}
+
+message ModelAllowlistProviderEntry {
+  bool enabled = 1;
+  map<string, ModelAllowlistModelEntry> models = 2;
+}
+
+message ModelParameterDefinition {
+  string id = 1;
+  string name = 2;
+  optional string markdown_tooltip = 3;
+  ModelParameterDefinition.ModelParameterType parameter_type = 4;
+  optional bool is_cycleable_by_hotkey = 5;
+
+  message BooleanParameterDefinition {
+    repeated ModelParameterDefinition.BooleanParameterDefinition.BooleanParameterValue values = 1;
+
+    message BooleanParameterValue {
+      string value = 1;
+      optional string display_name = 2;
+      optional bool increases_model_cost = 3;
+      optional bool default_blocked_in_admin_allowlist = 4;
+      optional bool hide_from_user_picker_when_admin_blocked = 5;
+      optional bool blocked_by_admin_allowlist = 6;
+    }
+  }
+
+  message EnumParameterDefinition {
+    repeated ModelParameterDefinition.EnumParameterDefinition.EnumParameterValue values = 1;
+
+    message EnumParameterValue {
+      string value = 1;
+      optional string display_name = 2;
+      optional bool increases_model_cost = 3;
+      optional bool blocked_by_admin_allowlist = 4;
+      optional string markdown_tooltip = 5;
+      repeated AvailableModelsResponse.ModelPickerBadge model_picker_badges = 6;
+    }
+  }
+
+  message ModelParameterType {
+    optional ModelParameterDefinition.BooleanParameterDefinition boolean_parameter = 1;
+    optional ModelParameterDefinition.EnumParameterDefinition enum_parameter = 2;
+  }
+}
+
+enum NetworkingMode {
+  NETWORKING_MODE_UNSPECIFIED = 0;
+  NETWORKING_MODE_USER_CONTROLLED = 1;
+  NETWORKING_MODE_ALWAYS_DISABLED = 2;
+}
+
+message NotifySandAgentTurnFinishedRequest {
+  string agent_id = 1;
+  string agent_name = 2;
+  string message_preview = 3;
+  string last_message_id = 4;
+  bool awaiting_user_response = 5;
+  repeated string member_agent_ids = 7;
+  string sender_agent_id = 8;
+  string message_content_json = 9;
+}
+
+message NotifySandAgentTurnFinishedResponse {
+}
+
+message OnePasswordConnection {
+  string connection_id = 1;
+  string account_uuid = 2;
+  string account_email = 3;
+  string account_url = 4;
+  string vault_id = 5;
+  string vault_name = 6;
+  int32 item_count = 7;
+  string catalog_revision = 8;
+  int64 last_successful_sync_at_ms = 9;
+  string last_sync_error_code = 10;
+  int32 credential_generation = 11;
+  int64 issued_at_ms = 12;
+  int64 expires_at_ms = 13;
+  int64 renew_by_at_ms = 14;
+  int64 reminder_at_ms = 15;
+  CredentialLifecycleState lifecycle_state = 16;
+  CredentialExpirationMode expiration_mode = 17;
+  bool provider_expiry_requested = 18;
+  bool always_allow = 19;
+}
+
+message OnePasswordCredentialDecisionResponse {
+  bool ok = 1;
+  string detail = 2;
+}
+
+message OnePasswordCredentialItem {
+  string credential_id = 1;
+  string title = 2;
+  string category = 3;
+  repeated string sites = 4;
+  repeated CredentialTargetRule target_rules = 5;
+  string vault_name = 6;
+  string connection_id = 7;
+  string catalog_revision = 8;
+}
+
+message OnePasswordState {
+  repeated OnePasswordConnection connections = 1;
+  repeated OnePasswordCredentialItem items = 2;
+}
+
+message OpenGrokBotUserComputerRequestRequest {
+  string machine_id = 1;
+  GrokBotUserComputerRequestFrame frame = 2;
+  string idempotency_key = 3;
+}
+
+message Plugin {
+  int64 id = 1;
+  string name = 2;
+  string display_name = 3;
+  string description = 4;
+  PluginStatus status = 6;
+  optional string repository_url = 8;
+  repeated string tags = 9;
+  optional string logo_url = 10;
+  optional string primary_color = 11;
+  bool is_published = 12;
+  int64 created_at = 13;
+  int64 updated_at = 14;
+  optional int64 publisher_id = 16;
+  optional Publisher publisher = 17;
+  bool is_deprecated = 18;
+  optional string deprecation_message = 19;
+  optional int64 deprecated_at = 20;
+  optional int64 replaced_by_plugin_id = 21;
+  optional int64 marketplace_id = 22;
+  optional Marketplace marketplace = 23;
+  string git_url = 24;
+  optional string git_ref = 25;
+  optional string git_path = 26;
+  string full_ref = 27;
+  repeated SkillDescriptor skills = 28;
+  repeated SubagentDescriptor subagents = 29;
+  repeated HookDescriptor hooks = 30;
+  repeated RuleDescriptor rules = 31;
+  repeated McpDescriptor mcp_servers = 32;
+  repeated CommandDescriptor commands = 33;
+  optional string release_repo = 34;
+  optional string release_asset = 35;
+  optional string release_tag = 36;
+  repeated string curated_category_keys = 37;
+  .google.protobuf.Struct variables = 38;
+  optional TeamMarketplacePluginInstallMode team_marketplace_install_mode = 39;
+  .google.protobuf.Struct team_marketplace_configured_variables = 40;
+  PluginLifecycleState lifecycle_state = 41;
+  optional PluginMinClientVersions min_client_versions = 42;
+  bool published_by_user = 43;
+}
+
+enum PluginLifecycleState {
+  PLUGIN_LIFECYCLE_STATE_UNSPECIFIED = 0;
+  PLUGIN_LIFECYCLE_STATE_PUBLIC_LISTED = 1;
+  PLUGIN_LIFECYCLE_STATE_PUBLIC_UNLISTED = 2;
+  PLUGIN_LIFECYCLE_STATE_PUBLIC_DRAFT = 3;
+  PLUGIN_LIFECYCLE_STATE_PUBLIC_PENDING = 4;
+  PLUGIN_LIFECYCLE_STATE_PUBLIC_REJECTED = 5;
+  PLUGIN_LIFECYCLE_STATE_PUBLISHER_SUBMISSION = 6;
+  PLUGIN_LIFECYCLE_STATE_PRIVATE_ACTIVE = 7;
+  PLUGIN_LIFECYCLE_STATE_PUBLIC_DEPRECATED = 10;
+  PLUGIN_LIFECYCLE_STATE_PRIVATE_DEPRECATED = 11;
+  PLUGIN_LIFECYCLE_STATE_PUBLIC_INVALID = 12;
+  PLUGIN_LIFECYCLE_STATE_PRIVATE_INVALID = 13;
+  PLUGIN_LIFECYCLE_STATE_PRIVATE_PUBLISHED = 14;
+}
+
+message PluginMinClientVersions {
+  optional string cursor = 1;
+  optional string sand = 2;
+}
+
+enum PluginStatus {
+  PLUGIN_STATUS_UNSPECIFIED = 0;
+  PLUGIN_STATUS_DRAFT = 1;
+  PLUGIN_STATUS_PENDING_APPROVAL = 2;
+  PLUGIN_STATUS_APPROVED = 3;
+  PLUGIN_STATUS_REJECTED = 4;
+  PLUGIN_STATUS_UNLISTED = 5;
+}
+
+message PollGrokBotUserComputerRequestsRequest {
+  string machine_id = 1;
+  string credential = 2;
+  repeated string ack_ids = 3;
+  uint32 limit = 4;
+}
+
+message PollGrokBotUserComputerRequestsResponse {
+  repeated GrokBotUserComputerQueuedRequest requests = 1;
+}
+
+message PresignGrokBotMarketplaceCreatorProfileUploadInternalRequest {
+  string content_type = 1;
+  int64 byte_size = 2;
+}
+
+message PresignGrokBotMarketplaceImageUploadInternalRequest {
+  int64 listing_id = 1;
+  GrokBotMarketplaceImageKind image_kind = 2;
+  string content_type = 3;
+  int64 byte_size = 4;
+}
+
+message PresignGrokBotMarketplaceImageUploadInternalResponse {
+  string put_url = 1;
+  string public_url = 2;
+}
+
+message PresignSandBoxStoreReadsRequest {
+  repeated string rel_paths = 1;
+}
+
+message PresignSandBoxStoreReadsResponse {
+  repeated SandBoxStoreReadInstruction instructions = 1;
+}
+
+message PresignSandBoxStoreWritesRequest {
+  repeated SandBoxStoreWriteFile files = 1;
+}
+
+message PresignSandBoxStoreWritesResponse {
+  repeated SandBoxStoreWriteInstruction instructions = 1;
+}
+
+message PreviewGrokBotMarketplaceSourceInternalRequest {
+  string source_ref = 1;
+}
+
+message PreviewGrokBotMarketplaceSourceInternalResponse {
+  int64 template_id = 1;
+  string share_id = 2;
+  string name = 3;
+  string description = 4;
+  string avatar_shape = 5;
+  string avatar_color = 6;
+  bool published = 7;
+  uint32 active_version = 8;
+  bool eligible = 9;
+  string ineligibility_reason = 10;
+}
+
+enum PrivacyMode {
+  PRIVACY_MODE_UNSPECIFIED = 0;
+  PRIVACY_MODE_NO_STORAGE = 1;
+  PRIVACY_MODE_NO_TRAINING = 2;
+  PRIVACY_MODE_USAGE_DATA_TRAINING_ALLOWED = 3;
+  PRIVACY_MODE_USAGE_CODEBASE_TRAINING_ALLOWED = 4;
+}
+
+enum PrivateInferenceEnablement {
+  PRIVATE_INFERENCE_ENABLEMENT_UNSPECIFIED = 0;
+  PRIVATE_INFERENCE_ENABLEMENT_ENABLED = 1;
+  PRIVATE_INFERENCE_ENABLEMENT_DISABLED = 2;
+}
+
+message PrivateInferenceSettings {
+  bool enabled = 1;
+  bool can_enable = 4;
+}
+
+message PromptDeeplinkControls {
+  bool enabled = 1;
+}
+
+enum PrReviewOpenDestinationMode {
+  PR_REVIEW_OPEN_DESTINATION_MODE_UNSPECIFIED = 0;
+  PR_REVIEW_OPEN_DESTINATION_MODE_GITHUB = 1;
+  PR_REVIEW_OPEN_DESTINATION_MODE_GRAPHITE = 2;
+  PR_REVIEW_OPEN_DESTINATION_MODE_REVIEW_CURSOR = 3;
+}
+
+enum PrReviewOpenSurfaceMode {
+  PR_REVIEW_OPEN_SURFACE_MODE_UNSPECIFIED = 0;
+  PR_REVIEW_OPEN_SURFACE_MODE_IN_APP = 1;
+  PR_REVIEW_OPEN_SURFACE_MODE_EXTERNAL_BROWSER = 2;
+}
+
+enum PublicArtifactSharingMode {
+  PUBLIC_ARTIFACT_SHARING_MODE_UNSPECIFIED = 0;
+  PUBLIC_ARTIFACT_SHARING_MODE_ALLOWED = 1;
+  PUBLIC_ARTIFACT_SHARING_MODE_DISABLED = 2;
+}
+
+message PublicGrokBotMarketplaceCreator {
+  string name = 1;
+  string profile_photo_url = 2;
+  map<string, string> handles = 3;
+}
+
+message PublicGrokBotMarketplaceListing {
+  string slug = 1;
+  string name = 2;
+  string description = 3;
+  oneof avatar {
+    string image_url = 4;
+    GrokBotMarketplaceDefaultAvatar default_avatar = 5;
+  }
+  string category = 6;
+  int64 created_at_ms = 7;
+  int64 updated_at_ms = 8;
+  string share_id = 9;
+  PublicGrokBotMarketplaceCreator creator = 10;
+  repeated string categories = 11;
+}
+
+message PublicProfileSettings {
+  bool public_visibility_allowed = 1;
+  string policy = 2;
+}
+
+message Publisher {
+  int64 id = 1;
+  string name = 2;
+  string display_name = 3;
+  optional string description = 4;
+  optional int32 owner_user_id = 5;
+  optional int32 owner_team_id = 6;
+  bool is_verified = 7;
+  optional int64 verified_at = 8;
+  optional string verified_domain = 9;
+  optional string logo_url = 10;
+  optional string website_url = 11;
+  optional string support_url = 12;
+  int64 created_at = 13;
+  int64 updated_at = 14;
+  bool is_user_owned = 15;
+}
+
+message PublishGrokBotUserSkillsSnapshotRequest {
+  string fingerprint = 1;
+}
+
+message PublishGrokBotUserSkillsSnapshotResponse {
+}
+
+message PullRequestPreferences {
+  PrReviewOpenDestinationMode pr_review_open_destination = 1;
+}
+
+message PutGrokBotMemoryShardRequest {
+  string agent_id = 1;
+  GrokBotMemoryFolder folder = 2;
+}
+
+message PutGrokBotMemoryShardResponse {
+  uint32 version = 1;
+}
+
+message PutGrokBotSecretRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string value = 4;
+}
+
+message PutGrokBotSecretResponse {
+  GrokBotSecret secret = 1;
+}
+
+message RaiseGrokBotVirtualCardRequest {
+  string agent_id = 1;
+  int64 amount_cents = 2;
+  string currency = 3;
+  string merchant_name = 4;
+  string merchant_url = 5;
+  string context = 6;
+}
+
+message RaiseGrokBotVirtualCardResponse {
+  GrokBotVirtualCardRaiseOutcome outcome = 1;
+  string request_id = 2;
+  optional string merchant_name = 3;
+  optional string superseded_request_id = 4;
+}
+
+message ReactToGrokBotMessageRequest {
+  string agent_id = 1;
+  string entry_id = 2;
+  string emoji = 3;
+  string session_id = 4;
+}
+
+message ReactToGrokBotMessageResponse {
+  optional GrokBotHarnessRefusal refusal = 1;
+}
+
+message ReadGrokBotAgentAttachmentChunkRequest {
+  string path = 1;
+  int64 offset = 2;
+  uint32 length = 3;
+  optional string session_id = 4;
+}
+
+message ReadGrokBotAgentAttachmentChunkResponse {
+  bytes data = 1;
+  int64 total_size = 2;
+}
+
+message RecreateSandBoxRequest {
+  bool preserve_data = 1;
+  bool force = 2;
+  bool acknowledge_terminal_upgrade_schedule = 3;
+}
+
+message RecreateSandBoxResponse {
+  bool started = 1;
+  string reason = 2;
+  string operation_id = 3;
+}
+
+message RecreateTeamMemberSandBoxRequest {
+  int32 team_id = 1;
+  int32 user_id = 2;
+  bool force = 3;
+}
+
+message RegisterSandMachineRequest {
+  string label = 1;
+  optional string local_tool_permission = 2;
+  optional bool messages_enabled = 3;
+}
+
+message RegisterSandMachineResponse {
+}
+
+message ReinstallGrokBotSlackAppRequest {
+  string agent_id = 1;
+}
+
+message ReinstallGrokBotSlackAppResponse {
+  GrokBotSlackReinstallOutcome outcome = 1;
+  optional string slack_team_id = 2;
+  optional string workspace_name = 3;
+  optional string slack_error = 4;
+  optional uint32 retry_after_seconds = 5;
+  optional string oauth_authorize_url = 6;
+  optional bool approval_request_filed = 7;
+}
+
+message ReloadWindowAction {
+}
+
+message RemoteControlV2Policy {
+  optional bool enabled = 1;
+  optional bool automatic_registration_enabled = 2;
+  optional bool available = 3;
+  optional bool automatic_registration_released = 4;
+  optional string remote_control_denying_org_name = 5;
+  optional string automatic_registration_denying_org_name = 6;
+}
+
+message RemoveGrokBotAgentSkillRequest {
+  string agent_id = 1;
+  string name = 2;
+}
+
+message RemoveGrokBotAgentSkillResponse {
+  GrokBotAgentMarketplace marketplace = 1;
+  repeated GrokBotAgentPlugin plugins = 2;
+}
+
+message RenameMcpOAuthAccountRequest {
+  int32 server_id = 1;
+  string account_key = 2;
+  string new_account_key = 3;
+}
+
+message RenameMcpOAuthAccountResponse {
+}
+
+message ReportClientNumericMetricsRequest {
+  repeated ClientNumericMetric metrics = 1;
+}
+
+message ReportClientNumericMetricsResponse {
+}
+
+message ReportGrokBotClientPresenceRequest {
+  string agent_id = 1;
+  bool viewing = 2;
+  string surface = 3;
+}
+
+message ReportGrokBotClientPresenceResponse {
+  int64 presence_ttl_ms = 1;
+}
+
+message ReportSandBoxHostStateRequest {
+  optional GrokBotBoxDiskPressureLevel disk_pressure = 1;
+  optional string host_version = 2;
+  optional bool host_update_available = 3;
+}
+
+message ReportSandBoxHostStateResponse {
+}
+
+message ReportSandProcessMetricsRequest {
+  int64 sample_start = 1;
+  int64 sample_end = 2;
+  int32 num_subsamples = 3;
+  int64 sample_seqno = 4;
+  string session_id = 5;
+  repeated SandProcessMetricsRowRequest rows = 6;
+  string os = 7;
+  string os_version = 8;
+  string arch = 9;
+  string client_version = 10;
+  string client_id = 11;
+}
+
+message ReportSandProcessMetricsResponse {
+}
+
+message RequestGrokBotRoomMemberTurnRequest {
+  string nonce = 1;
+  GrokBotRoomMemberTurnRoom room = 2;
+  string member_agent_id = 3;
+  repeated GrokBotRoomMemberTurnPeer peers = 4;
+  repeated GrokBotRoomMemberTurnMessage new_messages = 5;
+  bool is_winding_down = 6;
+  int64 deadline_ms = 7;
+  optional string parent_request_id = 8;
+  optional string root_parent_request_id = 9;
+}
+
+message RequestGrokBotRoomMemberTurnResponse {
+  GrokBotRoomMemberTurnDispatch dispatch = 1;
+  string member_agent_id = 2;
+  optional string workflow_id = 3;
+}
+
+message RescheduleSandBoxUpgradeRequest {
+  string timezone = 1;
+  string local_time = 2;
+  bool recurring = 3;
+}
+
+message RescheduleSandBoxUpgradeResponse {
+  SandBoxUpgradeSchedule schedule = 1;
+}
+
+message ResolveGrokBotAutoReviewApprovalRequest {
+  string agent_id = 1;
+  string request_id = 2;
+  GrokBotAutoReviewApprovalResolution resolution = 3;
+  string approval_platform = 4;
+  optional string approved_command = 5;
+  optional string session_id = 6;
+}
+
+message ResolveGrokBotAutoReviewApprovalResponse {
+  bool dispatched = 1;
+  optional string workflow_id = 2;
+}
+
+message ResolveGrokBotCredentialRequestRequest {
+  string agent_id = 1;
+  string entry_id = 2;
+  GrokBotCredentialRequestResolution resolution = 3;
+  string session_id = 4;
+}
+
+message ResolveGrokBotCredentialRequestResponse {
+  bool accepted = 1;
+  optional GrokBotHarnessRefusal refusal = 2;
+}
+
+message ResolveGrokBotLocalToolPermissionRequest {
+  string agent_id = 1;
+  string entry_id = 2;
+  string request_id = 3;
+  GrokBotLocalToolPermissionCardResolution resolution = 4;
+  optional string session_id = 5;
+}
+
+message ResolveGrokBotLocalToolPermissionResponse {
+  bool dispatched = 1;
+  optional string workflow_id = 2;
+  optional GrokBotHarnessRefusal refusal = 3;
+}
+
+message ResolveGrokBotVirtualCardApprovalRequest {
+  string agent_id = 1;
+  string entry_id = 2;
+  string request_id = 3;
+  GrokBotVirtualCardResolution resolution = 4;
+  optional string payment_method_id = 5;
+}
+
+message ResolveGrokBotVirtualCardApprovalResponse {
+  GrokBotVirtualCardOutcome outcome = 1;
+  optional string spend_request_id = 2;
+  optional string approval_url = 3;
+  optional string message = 4;
+  optional GrokBotHarnessRefusal refusal = 5;
+}
+
+message RespondGrokBotWidgetRequest {
+  string agent_id = 1;
+  string entry_id = 2;
+  string value = 3;
+  string session_id = 4;
+}
+
+message RespondGrokBotWidgetResponse {
+  bool accepted = 1;
+  optional GrokBotHarnessRefusal refusal = 2;
+}
+
+message RuleDescriptor {
+  string name = 1;
+  optional string description = 2;
+  optional string source_path = 3;
+  optional string source_url = 4;
+}
+
+message RunGenerateImageError {
+  string error = 1;
+  bool model_restricted = 2;
+}
+
+message RunGenerateImageRequest {
+  string description = 1;
+  repeated GenerateImageReferenceImage reference_images = 2;
+  string model_id = 3;
+  bool max_mode = 4;
+  optional string aspect_ratio = 5;
+}
+
+message RunGenerateImageResponse {
+  oneof result {
+    RunGenerateImageSuccess success = 1;
+    RunGenerateImageError error = 2;
+  }
+}
+
+message RunGenerateImageSuccess {
+  string image_data = 1;
+  string mime_type = 2;
+}
+
+message SandActionAuditSettings {
+  optional bool enabled = 1;
+}
+
+message SandAssignedSetupManifest {
+  SandSetupManifestScopeKind scope_kind = 1;
+  string scope_id = 2;
+  string manifest_id = 3;
+  string revision = 4;
+  repeated SandSetupManifestEntry entries = 5;
+}
+
+message SandAutoReviewControls {
+  optional bool enforce_enabled = 1;
+  repeated string allow_instructions = 2;
+  repeated string block_instructions = 3;
+  optional bool update_instructions = 4;
+}
+
+message SandBoxDescriptor {
+  bool running = 2;
+}
+
+enum SandboxingMode {
+  SANDBOXING_MODE_UNSPECIFIED = 0;
+  SANDBOXING_MODE_ENABLED = 1;
+  SANDBOXING_MODE_DISABLED = 2;
+}
+
+message SandBoxMigrationEvent {
+  SandBoxMigrationPhase phase = 1;
+  string detail = 2;
+  int64 at_ms = 3;
+  string offset_key = 4;
+  string operation_id = 5;
+}
+
+enum SandBoxMigrationPhase {
+  SAND_BOX_MIGRATION_PHASE_UNSPECIFIED = 0;
+  SAND_BOX_MIGRATION_PHASE_BACKING_UP = 1;
+  SAND_BOX_MIGRATION_PHASE_CREATING = 2;
+  SAND_BOX_MIGRATION_PHASE_MOVING = 3;
+  SAND_BOX_MIGRATION_PHASE_CLEANING_UP = 4;
+  SAND_BOX_MIGRATION_PHASE_WIPING = 5;
+  SAND_BOX_MIGRATION_PHASE_DONE = 6;
+  SAND_BOX_MIGRATION_PHASE_FAILED = 7;
+}
+
+enum SandboxReadBoundaryMode {
+  SANDBOX_READ_BOUNDARY_MODE_UNSPECIFIED = 0;
+  SANDBOX_READ_BOUNDARY_MODE_SYSTEM = 1;
+  SANDBOX_READ_BOUNDARY_MODE_WORKSPACE = 2;
+}
+
+enum SandBoxRunState {
+  SAND_BOX_RUN_STATE_UNSPECIFIED = 0;
+  SAND_BOX_RUN_STATE_ABSENT = 1;
+  SAND_BOX_RUN_STATE_HIBERNATED = 2;
+  SAND_BOX_RUN_STATE_RUNNING = 3;
+  SAND_BOX_RUN_STATE_STARTING = 4;
+}
+
+message SandBoxStoreManifestVersion {
+  string version_id = 1;
+  int64 last_modified_ms = 2;
+  int64 size_bytes = 3;
+  bool is_latest = 4;
+  string etag = 5;
+  optional int64 entry_count = 6;
+  optional int64 total_bytes = 7;
+  optional bool fully_hydrated = 8;
+  string parse_error = 9;
+}
+
+message SandBoxStoreMultipartAbortResult {
+  uint32 input_index = 1;
+  string rel_path = 2;
+  oneof outcome {
+    SandBoxStoreMultipartAbortSuccess success = 3;
+    SandBoxStoreMultipartOperationFailure failure = 4;
+  }
+}
+
+message SandBoxStoreMultipartAbortSuccess {
+  bool already_finished = 1;
+}
+
+message SandBoxStoreMultipartOperationFailure {
+  SandBoxStoreMultipartOperationFailureCode code = 1;
+}
+
+enum SandBoxStoreMultipartOperationFailureCode {
+  SAND_BOX_STORE_MULTIPART_OPERATION_FAILURE_CODE_UNSPECIFIED = 0;
+  SAND_BOX_STORE_MULTIPART_OPERATION_FAILURE_CODE_PRECONDITION_FAILED = 1;
+  SAND_BOX_STORE_MULTIPART_OPERATION_FAILURE_CODE_UPLOAD_NOT_FOUND = 2;
+  SAND_BOX_STORE_MULTIPART_OPERATION_FAILURE_CODE_INVALID_PARTS = 3;
+  SAND_BOX_STORE_MULTIPART_OPERATION_FAILURE_CODE_CHECKSUM_MISMATCH = 4;
+  SAND_BOX_STORE_MULTIPART_OPERATION_FAILURE_CODE_TRANSIENT = 5;
+  SAND_BOX_STORE_MULTIPART_OPERATION_FAILURE_CODE_INTERNAL = 6;
+  SAND_BOX_STORE_MULTIPART_OPERATION_FAILURE_CODE_RESTART_REQUIRED = 7;
+}
+
+message SandBoxStoreMultipartPart {
+  uint32 part_number = 1;
+  int64 size_bytes = 2;
+  string sha256 = 3;
+}
+
+message SandBoxStoreMultipartUploadContext {
+  string upload_id = 1;
+  string rel_path = 2;
+  int64 size_bytes = 3;
+  string sha256 = 4;
+  uint32 expected_part_count = 5;
+  repeated string part_sha256s = 6;
+  oneof precondition {
+    string if_match_etag = 7;
+    bool expect_absent = 8;
+  }
+  string session_id = 9;
+}
+
+message SandBoxStoreMultipartUploadedPart {
+  uint32 part_number = 1;
+  string etag = 2;
+}
+
+message SandBoxStoreMultipartUploadPartInstruction {
+  uint32 part_number = 1;
+  string url = 2;
+  map<string, string> headers = 3;
+  int64 offset_bytes = 4;
+  int64 size_bytes = 5;
+}
+
+message SandBoxStoreMultipartWriteAbort {
+  SandBoxStoreMultipartUploadContext context = 1;
+}
+
+message SandBoxStoreMultipartWriteCompletion {
+  SandBoxStoreMultipartUploadContext context = 1;
+  repeated SandBoxStoreMultipartUploadedPart parts = 2;
+}
+
+message SandBoxStoreMultipartWriteInstruction {
+  SandBoxStoreMultipartUploadContext context = 1;
+  repeated SandBoxStoreMultipartUploadPartInstruction parts = 2;
+  int64 part_urls_expires_at_ms = 3;
+}
+
+message SandBoxStoreMultipartWriteResult {
+  uint32 input_index = 1;
+  string rel_path = 2;
+  oneof outcome {
+    SandBoxStoreMultipartWriteSuccess success = 3;
+    SandBoxStoreMultipartOperationFailure failure = 4;
+  }
+}
+
+message SandBoxStoreMultipartWriteSuccess {
+  string etag = 1;
+}
+
+message SandBoxStoreObjectEntry {
+  string rel_path = 1;
+  string etag = 2;
+  int64 size_bytes = 3;
+  int64 last_modified_ms = 4;
+}
+
+message SandBoxStoreReadInstruction {
+  string rel_path = 1;
+  string url = 2;
+  int64 expires_at_ms = 3;
+}
+
+message SandBoxStoreWriteFile {
+  string rel_path = 1;
+  string sha256 = 2;
+  int64 size_bytes = 3;
+  bool content_addressed = 4;
+  string if_match_etag = 5;
+  bool expect_absent = 6;
+  repeated SandBoxStoreMultipartPart multipart_parts = 7;
+}
+
+message SandBoxStoreWriteInstruction {
+  string rel_path = 1;
+  string url = 2;
+  map<string, string> headers = 3;
+  int64 expires_at_ms = 4;
+  optional SandBoxStoreMultipartWriteInstruction multipart = 5;
+}
+
+message SandBoxUpgradeSchedule {
+  string timezone = 1;
+  string local_time = 2;
+  bool recurring = 3;
+  optional string target_image_tag = 4;
+  optional int64 next_fire_at_ms = 5;
+  SandBoxUpgradeScheduleState state = 6;
+  optional string last_completed_image_tag = 7;
+  optional string failure_reason = 8;
+}
+
+enum SandBoxUpgradeScheduleState {
+  SAND_BOX_UPGRADE_SCHEDULE_STATE_UNSPECIFIED = 0;
+  SAND_BOX_UPGRADE_SCHEDULE_STATE_SCHEDULED = 1;
+  SAND_BOX_UPGRADE_SCHEDULE_STATE_CLAIMED = 2;
+  SAND_BOX_UPGRADE_SCHEDULE_STATE_RUNNING = 3;
+  SAND_BOX_UPGRADE_SCHEDULE_STATE_WAITING_FOR_IMAGE = 4;
+  SAND_BOX_UPGRADE_SCHEDULE_STATE_COMPLETED = 5;
+  SAND_BOX_UPGRADE_SCHEDULE_STATE_MISSED = 6;
+  SAND_BOX_UPGRADE_SCHEDULE_STATE_FAILED = 7;
+  SAND_BOX_UPGRADE_SCHEDULE_STATE_CANCELLED = 8;
+}
+
+enum SandCredentialDecisionHarness {
+  SAND_CREDENTIAL_DECISION_HARNESS_UNSPECIFIED = 0;
+  SAND_CREDENTIAL_DECISION_HARNESS_BOX = 1;
+  SAND_CREDENTIAL_DECISION_HARNESS_TEMPORAL = 2;
+}
+
+enum SandEgressMode {
+  SAND_EGRESS_MODE_UNSPECIFIED = 0;
+  SAND_EGRESS_MODE_ALLOW_ALL = 1;
+  SAND_EGRESS_MODE_DEFAULT_WITH_NETWORK_SETTINGS = 2;
+  SAND_EGRESS_MODE_NETWORK_SETTINGS_ONLY = 3;
+}
+
+enum SandGroupAccessMode {
+  SAND_GROUP_ACCESS_MODE_UNSPECIFIED = 0;
+  SAND_GROUP_ACCESS_MODE_ALL = 1;
+  SAND_GROUP_ACCESS_MODE_LIMITED = 2;
+}
+
+message SandLocalEgressControls {
+  optional bool allowed = 1;
+}
+
+message SandMachine {
+  string machine_id = 1;
+  string label = 2;
+  optional string local_tool_permission = 3;
+  bool messages_enabled = 4;
+}
+
+message SandNetworkControls {
+  SandEgressMode egress_mode = 1;
+  repeated string allowlist = 2;
+  bool locked = 3;
+}
+
+message SandOnboardingState {
+  bool completed = 1;
+  bool seen = 2;
+  repeated string checked_setup_checklist_items = 3;
+  repeated string skipped_setup_checklist_items = 4;
+  bool has_ever_completed = 5;
+}
+
+message SandOnDemandSettings {
+  bool visible = 1;
+  bool eligible = 2;
+  bool enabled = 3;
+  string dashboard_url = 4;
+}
+
+message SandProcessMetricsRowRequest {
+  int32 pid = 1;
+  int32 ppid = 2;
+  string process_name = 3;
+  string process_name_hash = 4;
+  int64 sample_cpu_time_ms = 5;
+  double sample_avg_mem_mb = 6;
+  double sample_peak_mem_mb = 7;
+  double session_peak_mem_mb = 8;
+  double memory_during_sample_peak_mb = 9;
+  double cpu_during_sample_peak_pct = 10;
+}
+
+message SandSetupManifestEntry {
+  string id = 1;
+  string setup = 2;
+  optional string check = 3;
+}
+
+enum SandSetupManifestScopeKind {
+  SAND_SETUP_MANIFEST_SCOPE_KIND_UNSPECIFIED = 0;
+  SAND_SETUP_MANIFEST_SCOPE_KIND_USER = 1;
+  SAND_SETUP_MANIFEST_SCOPE_KIND_TEAM = 2;
+  SAND_SETUP_MANIFEST_SCOPE_KIND_ORGANIZATION = 3;
+}
+
+message SandTeamSetupManifest {
+  string manifest_id = 1;
+  string revision = 2;
+  string etag = 3;
+  repeated SandSetupManifestEntry entries = 4;
+}
+
+message SandUpgradeRecommendation {
+  ErrorButton cta = 1;
+  bool disabled = 2;
+  optional string supporting_text = 3;
+  optional string kind = 4;
+}
+
+message SaveTeamSandSetupManifestRequest {
+  string manifest_id = 1;
+  string expected_etag = 2;
+  repeated SandSetupManifestEntry entries = 3;
+}
+
+message SaveTeamSandSetupManifestResponse {
+  SandTeamSetupManifest manifest = 1;
+}
+
+message ScheduleSandBoxUpgradeRequest {
+  string timezone = 1;
+  string local_time = 2;
+  bool recurring = 3;
+}
+
+message ScheduleSandBoxUpgradeResponse {
+  SandBoxUpgradeSchedule schedule = 1;
+}
+
+message SendGrokBotAgentMessageRequest {
+  string from_agent_id = 1;
+  string to_agent_id = 2;
+  string message_id = 3;
+  string text = 4;
+  int64 sent_at_ms = 5;
+}
+
+message SendGrokBotAgentMessageResponse {
+  GrokBotAgentMessageDelivery delivery = 1;
+  string target_agent_id = 2;
+  string target_name = 3;
+  optional string workflow_id = 4;
+}
+
+message SendGrokBotDraftRequest {
+  string agent_id = 1;
+  string entry_id = 2;
+  string session_id = 3;
+  oneof draft {
+    GrokBotEmailDraft email = 4;
+    GrokBotSlackDraft slack = 5;
+  }
+}
+
+message SendGrokBotDraftResponse {
+  bool accepted = 1;
+  optional GrokBotHarnessRefusal refusal = 2;
+}
+
+message SendGrokBotUserMessageRequest {
+  string agent_id = 1;
+  string message_id = 2;
+  string text = 3;
+  int64 sent_at_ms = 4;
+  optional string rich_text = 5;
+  optional string reply_to_id = 6;
+  bool is_fork = 7;
+  repeated string attachment_paths = 8;
+  repeated string attachment_names = 9;
+  optional string traceparent = 10;
+  optional int64 enter_epoch_ms = 11;
+  optional int64 composed_at_ms = 12;
+  GrokBotClientSurface source = 13;
+  optional string mcp_config_json = 14;
+  string session_id = 15;
+  optional string machine_id = 16;
+}
+
+message SendGrokBotUserMessageResponse {
+  bool dispatched = 1;
+  GrokBotTemporalHarnessMode mode = 2;
+  optional string workflow_id = 3;
+  GrokBotUserMessageDelivery delivery = 4;
+  optional GrokBotHarnessRefusal refusal = 5;
+}
+
+message SetGrokBotAgentAutomationEnabledRequest {
+  string agent_id = 1;
+  string automation_id = 2;
+  bool is_enabled = 3;
+  optional string time_zone = 4;
+}
+
+message SetGrokBotAgentAutomationEnabledResponse {
+  repeated GrokBotAgentAutomation automations = 1;
+}
+
+message SetGrokBotAgentClientStateRequest {
+  string agent_id = 1;
+  optional bool mark_read = 2;
+  optional bool mark_unread = 3;
+  optional bool notifications_enabled = 4;
+  optional bool notify_on_updates_enabled = 5;
+  optional bool hidden_from_sidebar = 6;
+}
+
+message SetGrokBotAgentClientStateResponse {
+  GrokBotAgentClientState state = 1;
+}
+
+message SetGrokBotAgentPluginsRequest {
+  string agent_id = 1;
+  repeated GrokBotAgentPluginEntry plugins = 2;
+}
+
+message SetGrokBotAgentPluginsResponse {
+  GrokBotAgentMarketplace marketplace = 1;
+  repeated GrokBotAgentPlugin plugins = 2;
+}
+
+message SetGrokBotAgentPluginVariablesRequest {
+  string agent_id = 1;
+  int64 plugin_id = 2;
+  .google.protobuf.Struct variables = 3;
+}
+
+message SetGrokBotAgentPluginVariablesResponse {
+  GrokBotAgentMarketplace marketplace = 1;
+  repeated GrokBotAgentPlugin plugins = 2;
+}
+
+enum SetGrokBotAgentVisibilityOutcome {
+  SET_GROK_BOT_AGENT_VISIBILITY_OUTCOME_UNSPECIFIED = 0;
+  SET_GROK_BOT_AGENT_VISIBILITY_OUTCOME_UPDATED = 1;
+  SET_GROK_BOT_AGENT_VISIBILITY_OUTCOME_UNSUPPORTED_HARNESS = 2;
+  SET_GROK_BOT_AGENT_VISIBILITY_OUTCOME_NO_TEAM = 3;
+}
+
+message SetGrokBotAgentVisibilityRequest {
+  string agent_id = 1;
+  GrokBotAgentVisibility visibility = 2;
+}
+
+message SetGrokBotAgentVisibilityResponse {
+  GrokBotAgent agent = 1;
+  SetGrokBotAgentVisibilityOutcome outcome = 2;
+}
+
+message SetGrokBotMarketplaceListingStatusInternalRequest {
+  int64 listing_id = 1;
+  GrokBotMarketplaceListingStatus status = 2;
+}
+
+message SetGrokBotRoomMembersRequest {
+  string agent_id = 1;
+  repeated string member_agent_ids = 2;
+}
+
+message SetGrokBotRoomMembersResponse {
+  GrokBotAgent agent = 1;
+}
+
+message SetGrokBotTemplateVisibilityRequest {
+  string share_id = 1;
+  GrokBotTemplateVisibility visibility = 2;
+}
+
+message SetGrokBotTemplateVisibilityResponse {
+  GrokBotTemplate template = 1;
+}
+
+message SetGrokBotUserMcpSettingsRequest {
+  GrokBotUserMcpSettings settings = 1;
+}
+
+message SetGrokBotUserMcpSettingsResponse {
+  GrokBotUserMcpSettings settings = 1;
+}
+
+message SetHardLimitRequest {
+  optional int32 team_id = 1;
+  int32 hard_limit = 2;
+  bool no_usage_based_allowed = 3;
+  optional int32 hard_limit_per_user = 4;
+  bool preserve_hard_limit_per_user = 5;
+  int32 per_user_monthly_limit_dollars = 6;
+  bool clear_per_user_monthly_limit_dollars = 7;
+  bool is_dynamic_team_limit = 8;
+  bool clear_conflicting_policy = 9;
+  optional bool auto_alerts_enabled = 10;
+  optional int32 per_user_first_party_models_additional_budget_dollars = 11;
+  bool clear_per_user_first_party_models_additional_budget_dollars = 12;
+  optional bool per_user_first_party_models_additional_budget_unlimited = 13;
+  bool clear_per_user_first_party_models_additional_budget_unlimited = 14;
+}
+
+message SetHardLimitResponse {
+}
+
+message SetMcpConfigRequest {
+  bool team_scope = 1;
+  int32 team_id = 2;
+  string config_json = 3;
+  map<string, string> server_renames = 4;
+  map<string, int64> server_ids_by_name = 5;
+}
+
+message SetMcpConfigResponse {
+}
+
+message SetOnePasswordAlwaysAllowRequest {
+  string connection_id = 1;
+  bool always_allow = 2;
+}
+
+message SharedCanvasSettings {
+  bool enabled = 1;
+}
+
+message SharedConversationSettings {
+  bool enabled = 1;
+  repeated SharedConversationVisibility allowed_visibilities = 2;
+  optional bool allow_public_indexing = 3;
+}
+
+enum SharedConversationVisibility {
+  SHARED_CONVERSATION_VISIBILITY_UNSPECIFIED = 0;
+  SHARED_CONVERSATION_VISIBILITY_PRIVATE = 1;
+  SHARED_CONVERSATION_VISIBILITY_TEAM = 2;
+  SHARED_CONVERSATION_VISIBILITY_PUBLIC = 3;
+}
+
+message SkillDescriptor {
+  string name = 1;
+  optional string description = 2;
+  optional string source_path = 3;
+  optional string source_url = 4;
+  repeated string environments = 5;
+  repeated string disabled_environments = 6;
+  optional .agent.v1.CustomModeDescriptor custom_mode = 7;
+  optional string display_name = 8;
+  optional string icon = 9;
+  optional string color = 10;
+  optional string content = 11;
+}
+
+message SlackIntegrationSettings {
+  bool hidden = 1;
+}
+
+enum SpendGroupByCategory {
+  SPEND_GROUP_BY_CATEGORY_UNSPECIFIED = 0;
+  SPEND_GROUP_BY_CATEGORY_MODEL = 1;
+  SPEND_GROUP_BY_CATEGORY_USAGE_TYPE = 2;
+}
+
+enum SpendType {
+  SPEND_TYPE_UNSPECIFIED = 0;
+  SPEND_TYPE_ON_DEMAND = 1;
+  SPEND_TYPE_INCLUDED = 2;
+  SPEND_TYPE_ALL = 3;
+}
+
+message StartBulkTeamMemberSandBoxOperationRequest {
+  int32 team_id = 1;
+  repeated int32 user_ids = 2;
+  BulkTeamMemberSandBoxAction action = 3;
+  bool force = 4;
+  string operation_id = 5;
+}
+
+message StartBulkTeamMemberSandBoxOperationResponse {
+  string operation_id = 1;
+}
+
+message StartGrokBotSlackConnectRequest {
+  string agent_id = 1;
+}
+
+message StartGrokBotSlackConnectResponse {
+  string url = 1;
+  GrokBotSlackConnectOutcome outcome = 2;
+}
+
+message StatSandBoxStoreObjectRequest {
+  string rel_path = 1;
+}
+
+message StatSandBoxStoreObjectResponse {
+  bool exists = 1;
+  string etag = 2;
+  int64 size_bytes = 3;
+  int64 last_modified_ms = 4;
+}
+
+message SubagentDescriptor {
+  string name = 1;
+  optional string description = 2;
+  optional string source_path = 3;
+  optional string source_url = 4;
+}
+
+message SubmitGrokBotSecretRequest {
+  string agent_id = 1;
+  string entry_id = 2;
+  string value = 3;
+  string session_id = 4;
+}
+
+message SubmitGrokBotSecretResponse {
+  bool accepted = 1;
+  optional GrokBotHarnessRefusal refusal = 2;
+}
+
+message SubmitGrokBotUserComputerResponsesRequest {
+  string machine_id = 1;
+  string credential = 2;
+  repeated GrokBotUserComputerResponseFrame frames = 3;
+}
+
+message SubmitGrokBotUserComputerResponsesResponse {
+  uint32 accepted_count = 1;
+}
+
+message SubmitGrokBotUserFormRequest {
+  string agent_id = 1;
+  string entry_id = 2;
+  map<string, string> values = 3;
+  string session_id = 4;
+  GrokBotUserFormClientPlatform platform = 5;
+}
+
+message SubmitGrokBotUserFormResponse {
+  bool accepted = 1;
+  optional GrokBotHarnessRefusal refusal = 2;
+}
+
+message SubmitLogsRequest {
+  repeated ClientLogEntry logs = 1;
+}
+
+message SubmitLogsResponse {
+  bool success = 1;
+  optional string error_message = 2;
+  uint32 logs_processed = 3;
+  uint32 logs_dropped = 4;
+}
+
+message SwitchModelAction {
+  optional string suggested_model = 1;
+  repeated SwitchModelAction.ModelParameterValue parameters = 2;
+  optional bool max_mode = 3;
+
+  message ModelParameterValue {
+    string id = 1;
+    string value = 2;
+  }
+}
+
+message SyncOnePasswordConnectionsRequest {
+}
+
+message Team {
+  string name = 1;
+  int32 id = 2;
+  TeamRole role = 3;
+  int32 seats = 4;
+  bool has_billing = 5;
+  int32 request_quota_per_seat = 6;
+  bool privacy_mode_forced = 7;
+  bool allow_sso = 8;
+  bool admin_only_usage_pricing = 9;
+  string subscription_status = 10;
+  string bedrock_iam_role = 11;
+  bool verified = 12;
+  bool is_enterprise = 13;
+  bool privacy_mode_migration_opted_out = 14;
+  string bedrock_external_id = 15;
+  string membership_type = 16;
+  optional int32 purchased_seats = 17;
+  optional int64 billing_cycle_start = 18;
+  optional int64 billing_cycle_end = 19;
+  optional string pricing_strategy = 20;
+  optional int32 total_committed_dollars = 21;
+  bool data_sharing_discount_eligible = 22;
+  bool dashboard_analytics_requires_admin = 23;
+  bool individual_spend_limits_blocked = 24;
+  bool allow_domain_join = 25;
+  repeated string domain_join_domains = 26;
+  bool sso_enabled = 27;
+  optional int64 customer_balance_cents = 28;
+  bool scim_require_user_directory = 29;
+  bool self_serve_tiered_pricing_enabled = 30;
+  bool new_member_usage_promo_eligible = 31;
+  optional int64 deleted_at_ms = 34;
+  repeated string granted_permissions = 35;
+  bool is_direct_member = 36;
+  string team_slug = 37;
+  PrivateInferenceEnablement private_inference_enablement = 38;
+}
+
+message TeamAdminModelRef {
+  string model_id = 1;
+  repeated TeamAdminModelRef.ModelParameterValue parameters = 2;
+
+  message ModelParameterValue {
+    string id = 1;
+    string value = 2;
+  }
+}
+
+message TeamAdminNewChatModelResetRule {
+  TeamAdminModelRef source_model = 1;
+  TeamAdminModelRef target_model = 2;
+}
+
+message TeamAdminNewChatModelResetSettings {
+  bool enabled = 1;
+  repeated TeamAdminNewChatModelResetRule rules = 2;
+}
+
+enum TeamFollowupEnabledMode {
+  TEAM_FOLLOWUP_ENABLED_MODE_UNSPECIFIED = 0;
+  TEAM_FOLLOWUP_ENABLED_MODE_DISABLED = 1;
+  TEAM_FOLLOWUP_ENABLED_MODE_SERVICE_ACCOUNTS_ONLY = 2;
+  TEAM_FOLLOWUP_ENABLED_MODE_ALL = 3;
+}
+
+message TeamMarketplaceConfig {
+  repeated int64 directory_group_ids = 1;
+  optional int32 configured_by = 2;
+  int64 created_at = 3;
+  int64 updated_at = 4;
+  repeated MarketplaceAccessGrant access_grants = 5;
+}
+
+enum TeamMarketplacePluginInstallMode {
+  TEAM_MARKETPLACE_PLUGIN_INSTALL_MODE_OPTIONAL = 0;
+  TEAM_MARKETPLACE_PLUGIN_INSTALL_MODE_DEFAULT = 1;
+  TEAM_MARKETPLACE_PLUGIN_INSTALL_MODE_REQUIRED = 2;
+}
+
+message TeamMember {
+  string name = 1;
+  int32 id = 2;
+  TeamRole role = 3;
+  string email = 4;
+  bool is_removed = 5;
+  TeamMemberBillingTier billing_tier = 6;
+  TeamMemberBillingTier pending_billing_tier = 7;
+  bool role_is_managed = 8;
+}
+
+enum TeamMemberBillingTier {
+  TEAM_MEMBER_BILLING_TIER_UNSPECIFIED = 0;
+  TEAM_MEMBER_BILLING_TIER_TIER_1000 = 1;
+  TEAM_MEMBER_BILLING_TIER_TIER_2000 = 2;
+}
+
+message TeamMemberSandBoxPod {
+  string cluster = 1;
+  string pod_id = 2;
+  string tenant_id = 3;
+  string flavor = 4;
+  string run_state = 5;
+  optional string image_tag = 6;
+  optional int64 created_at_ms = 7;
+  optional int64 last_active_at_ms = 8;
+  optional string node_id = 9;
+  optional string failure_reason = 10;
+}
+
+message TeamPluginPopularityCount {
+  int64 plugin_id = 1;
+  int32 member_install_count = 2;
+}
+
+enum TeamRole {
+  TEAM_ROLE_UNSPECIFIED = 0;
+  TEAM_ROLE_OWNER = 1;
+  TEAM_ROLE_MEMBER = 2;
+  TEAM_ROLE_FREE_OWNER = 3;
+  TEAM_ROLE_REMOVED = 4;
+}
+
+message TextToSpeechRequest {
+  string text = 1;
+  optional string voice_id = 2;
+  optional string language = 3;
+  optional float speed = 4;
+}
+
+message TextToSpeechResponse {
+  bytes audio = 1;
+  string mime_type = 2;
+  int64 synthesis_time_ms = 3;
+}
+
+message TrackEventsRequest {
+  repeated AnalyticsEvent events = 1;
+}
+
+message TrackEventsResponse {
+}
+
+message TranscribeAudioRequest {
+  bytes audio = 1;
+  string mime_type = 2;
+  optional string language = 3;
+}
+
+message TranscribeAudioResponse {
+  string text = 1;
+  int64 transcription_time_ms = 2;
+}
+
+message UninstallGrokBotSlackAppRequest {
+  string agent_id = 1;
+}
+
+message UninstallGrokBotSlackAppResponse {
+  GrokBotSlackUninstallOutcome outcome = 1;
+  optional string slack_team_id = 2;
+  optional string slack_error = 3;
+  optional uint32 retry_after_seconds = 4;
+}
+
+message UninstallUserPluginRequest {
+  int64 plugin_id = 1;
+}
+
+message UninstallUserPluginResponse {
+  bool success = 1;
+}
+
+message UpdateGrokBotAgentMarketplaceRequest {
+  string agent_id = 1;
+  optional string display_name = 2;
+  optional string description = 3;
+}
+
+message UpdateGrokBotAgentMarketplaceResponse {
+  GrokBotAgentMarketplace marketplace = 1;
+}
+
+message UpdateGrokBotAgentRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string title = 4;
+  string avatar_shape = 5;
+  string avatar_color = 6;
+  oneof avatar_change {
+    .google.protobuf.Empty clear_avatar = 7;
+    string avatar_data_url = 8;
+  }
+}
+
+message UpdateGrokBotAgentResponse {
+  GrokBotAgent agent = 1;
+}
+
+message UpdateGrokBotAgentSkillRequest {
+  string agent_id = 1;
+  string name = 2;
+  optional string description = 3;
+  string content = 4;
+}
+
+message UpdateGrokBotAgentSkillResponse {
+  GrokBotAgentMarketplace marketplace = 1;
+  repeated GrokBotAgentPlugin plugins = 2;
+  GrokBotAgentPluginSkill skill = 3;
+}
+
+message UpdateGrokBotMarketplaceCategoryInternalRequest {
+  int64 category_id = 1;
+  optional string name = 2;
+}
+
+message UpdateGrokBotMarketplaceCreatorInternalRequest {
+  int64 creator_id = 1;
+  optional string name = 2;
+  optional string profile_photo_url = 3;
+  map<string, string> handles = 4;
+  optional bool replace_handles = 5;
+}
+
+message UpdateGrokBotMarketplaceListingInternalRequest {
+  int64 listing_id = 1;
+  optional string slug = 2;
+  optional string category = 3;
+  optional string name = 4;
+  optional string description = 5;
+  oneof avatar {
+    string image_url = 6;
+    GrokBotMarketplaceDefaultAvatar default_avatar = 7;
+  }
+  optional int64 creator_id = 11;
+  repeated int64 category_ids = 12;
+  optional bool replace_categories = 13;
+}
+
+message UpdateGrokBotMarketplaceListingTemplateInternalRequest {
+  int64 listing_id = 1;
+  string recipe_json = 2;
+}
+
+message UpdateGrokBotUserRuntimeSettingsRequest {
+  optional GrokBotPinnedAgents pinned_agents = 5;
+  optional GrokBotSidebarSections sidebar_sections = 6;
+  optional bool has_seen_onboarding = 7;
+}
+
+message UpdateGrokBotUserRuntimeSettingsResponse {
+  GrokBotUserRuntimeSettings settings = 1;
+}
+
+message UpdateSandMachineLabelRequest {
+  string machine_id = 1;
+  string label = 2;
+}
+
+message UpdateSandMachineLabelResponse {
+  SandMachine machine = 1;
+}
+
+message UpdateSandMachineLocalToolPermissionRequest {
+  string machine_id = 1;
+  string local_tool_permission = 2;
+}
+
+message UpdateSandMachineLocalToolPermissionResponse {
+  SandMachine machine = 1;
+}
+
+message UpdateSandMachineMessagesEnabledRequest {
+  string machine_id = 1;
+  bool messages_enabled = 2;
+}
+
+message UpdateSandMachineMessagesEnabledResponse {
+  SandMachine machine = 1;
+}
+
+message UpdateUserNameRequest {
+  string first_name = 1;
+  string last_name = 2;
+}
+
+message UpdateUserNameResponse {
+}
+
+message UpdateUserPluginInstallRequest {
+  int64 plugin_id = 1;
+  optional bool is_enabled = 3;
+  optional string pinned_git_ref = 5;
+  .google.protobuf.Struct variables = 6;
+}
+
+message UpdateUserPluginInstallResponse {
+  UserPluginInstall install = 1;
+}
+
+message UpgradeAction {
+  string membership_to_upgrade_to = 1;
+  optional bool try_immediate_upgrade = 2;
+  optional bool allow_trial = 3;
+  optional DashboardAction dashboard_action = 4;
+}
+
+message UpgradeChoice {
+}
+
+message UploadGrokBotAgentAttachmentChunkRequest {
+  string agent_id = 1;
+  string upload_id = 2;
+  string file_name = 3;
+  int64 offset = 4;
+  int64 total_size = 5;
+  bytes data = 6;
+  optional string sha256_hex = 7;
+  optional string session_id = 8;
+}
+
+message UploadGrokBotAgentAttachmentChunkResponse {
+  int64 received_bytes = 1;
+  optional string path = 2;
+}
+
+message UploadIssueTraceRequest {
+  string token = 1;
+  string payload = 2;
+  string payload_hash = 3;
+}
+
+message UploadIssueTraceResponse {
+  string event_id = 1;
+  int64 size = 2;
+}
+
+message UpsertGrokBotUserFormVaultEntryRequest {
+  GrokBotUserFormVaultEntry entry = 1;
+}
+
+message UpsertGrokBotUserFormVaultEntryResponse {
+}
+
+message UrlAction {
+  string url = 1;
+}
+
+message UserAgentStoreSkillsSyncSettings {
+  bool allowed = 1;
+}
+
+message UserPluginInstall {
+  int32 user_id = 1;
+  int64 plugin_id = 2;
+  bool is_enabled = 4;
+  int64 created_at = 6;
+  int64 updated_at = 7;
+  Plugin plugin = 8;
+  optional string pinned_git_ref = 10;
+}
+
+message ValidateMcpOAuthTokensRequest {
+  repeated string server_urls = 1;
+  optional string service_account_id = 2;
+  repeated ValidateMcpOAuthTokensRequest.Target targets = 3;
+  repeated string server_identifiers = 4;
+
+  message Target {
+    string server_url = 1;
+    string account_key = 2;
+  }
+}
+
+message ValidateMcpOAuthTokensResponse {
+  repeated ValidateMcpOAuthTokensResponse.Result results = 1;
+
+  message Result {
+    string server_url = 1;
+    bool has_valid_token = 2;
+    string account_key = 3;
+    optional string server_identifier = 4;
+    McpServedBy served_by = 5;
+  }
+}
+
+message VoteGrokBotFeedbackRequest {
+  string agent_id = 1;
+  string entry_id = 2;
+  GrokBotFeedbackAction action = 3;
+  repeated string categories = 4;
+  optional string comment = 5;
+  string session_id = 6;
+}
+
+message VoteGrokBotFeedbackResponse {
+  optional GrokBotHarnessRefusal refusal = 1;
+}
+
+message WatchGrokBotTranscriptsRequest {
+  repeated GrokBotTranscriptCursor cursors = 1;
+  optional bool include_unlisted_agents = 2;
+  uint32 inline_body_max_bytes = 3;
+}
+
+message WatchGrokBotUserComputerConnected {
+  uint32 pending_request_count = 1;
+}
+
+message WatchGrokBotUserComputerHeartbeat {
+  uint32 pending_request_count = 1;
+}
+
+message WatchGrokBotUserComputerNotify {
+}
+
+message WatchGrokBotUserComputerRequestsEvent {
+  oneof event {
+    WatchGrokBotUserComputerConnected connected = 1;
+    WatchGrokBotUserComputerNotify notify = 2;
+    WatchGrokBotUserComputerHeartbeat heartbeat = 3;
+  }
+}
+
+message WatchGrokBotUserComputerRequestsRequest {
+  string machine_id = 1;
+  string credential = 2;
+  GrokBotUserComputerHello hello = 3;
+}
+
+message WatchSandBoxMigrationRequest {
+  string from_offset_key = 1;
+  bool include_finished = 2;
+}
+
+message WorkspaceTrustControls {
+  bool enabled = 1;
+}

@@ -1,0 +1,56 @@
+// Grok Bot backend API — reverse engineered from grok-bot 0.51.0
+// (Electron "sand" build, embedded protobuf-ts descriptors). Do not edit by hand.
+
+syntax = "proto3";
+
+package aiserver.v1;
+
+import "aiserver/v1/types.proto";
+
+service DashboardService {
+  rpc CancelSandTrial(CancelSandTrialRequest) returns (CancelSandTrialResponse);
+  rpc CheckHttpMcpStatus(CheckHttpMcpStatusRequest) returns (CheckHttpMcpStatusResponse);
+  rpc ClientAction(ClientActionRequest) returns (ClientActionResponse);
+  rpc CompleteMcpOAuth(CompleteMcpOAuthRequest) returns (CompleteMcpOAuthResponse);
+  rpc DeleteMcpOAuthAccount(DeleteMcpOAuthAccountRequest) returns (DeleteMcpOAuthAccountResponse);
+  rpc DeleteMcpOAuthToken(DeleteMcpOAuthTokenRequest) returns (DeleteMcpOAuthTokenResponse);
+  rpc ExecuteSandMcpTool(ExecuteSandMcpToolRequest) returns (ExecuteSandMcpToolResponse);
+  rpc GetAggregatedUsageEvents(GetAggregatedUsageEventsRequest) returns (GetAggregatedUsageEventsResponse);
+  rpc GetAvailableMcpServers(GetAvailableMcpServersRequest) returns (GetAvailableMcpServersResponse);
+  rpc GetCanvasPayload(GetCanvasPayloadRequest) returns (GetCanvasPayloadResponse);
+  rpc GetCurrentPeriodUsage(GetCurrentPeriodUsageRequest) returns (GetCurrentPeriodUsageResponse);
+  rpc GetDailySpendByCategory(GetDailySpendByCategoryRequest) returns (GetDailySpendByCategoryResponse);
+  rpc GetEffectiveUserPlugins(GetEffectiveUserPluginsRequest) returns (GetEffectiveUserPluginsResponse);
+  rpc GetHardLimit(GetHardLimitRequest) returns (GetHardLimitResponse);
+  rpc GetManagedSkills(GetManagedSkillsRequest) returns (GetManagedSkillsResponse);
+  rpc GetMcpConfig(GetMcpConfigRequest) returns (GetMcpConfigResponse);
+  rpc GetMe(GetMeRequest) returns (GetMeResponse);
+  rpc GetMonthlyBillingCycle(GetMonthlyBillingCycleRequest) returns (GetMonthlyBillingCycleResponse);
+  rpc GetPluginMcpConfig(GetPluginMcpConfigRequest) returns (GetPluginMcpConfigResponse);
+  rpc GetSandAccessStatus(GetSandAccessStatusRequest) returns (GetSandAccessStatusResponse);
+  rpc GetSandMachineMessagesEnabled(GetSandMachineMessagesEnabledRequest) returns (GetSandMachineMessagesEnabledResponse);
+  rpc GetSandTrialClaimStatus(GetSandTrialClaimStatusRequest) returns (GetSandTrialClaimStatusResponse);
+  rpc GetSandUsageStatus(GetSandUsageStatusRequest) returns (GetSandUsageStatusResponse);
+  rpc GetTeamAdminSettingsOrEmptyIfNotInTeam(GetTeamAdminSettingsRequest) returns (GetTeamAdminSettingsResponse);
+  rpc GetTeamMembers(GetTeamMembersRequest) returns (GetTeamMembersResponse);
+  rpc GetTeamPluginPopularity(GetTeamPluginPopularityRequest) returns (GetTeamPluginPopularityResponse);
+  rpc GetTeams(GetTeamsRequest) returns (GetTeamsResponse);
+  rpc GetUserPrivacyMode(GetUserPrivacyModeRequest) returns (GetUserPrivacyModeResponse);
+  rpc InstallUserPlugin(InstallUserPluginRequest) returns (InstallUserPluginResponse);
+  rpc ListMarketplacePlugins(ListMarketplacePluginsRequest) returns (ListMarketplacePluginsResponse);
+  rpc ListMarketplaces(ListMarketplacesRequest) returns (ListMarketplacesResponse);
+  rpc ListSandMachines(ListSandMachinesRequest) returns (ListSandMachinesResponse);
+  rpc ListSandMcpTools(ListSandMcpToolsRequest) returns (ListSandMcpToolsResponse);
+  rpc ListUserCanvases(ListUserCanvasesRequest) returns (ListUserCanvasesResponse);
+  rpc RegisterSandMachine(RegisterSandMachineRequest) returns (RegisterSandMachineResponse);
+  rpc RenameMcpOAuthAccount(RenameMcpOAuthAccountRequest) returns (RenameMcpOAuthAccountResponse);
+  rpc SetHardLimit(SetHardLimitRequest) returns (SetHardLimitResponse);
+  rpc SetMcpConfig(SetMcpConfigRequest) returns (SetMcpConfigResponse);
+  rpc UninstallUserPlugin(UninstallUserPluginRequest) returns (UninstallUserPluginResponse);
+  rpc UpdateSandMachineLabel(UpdateSandMachineLabelRequest) returns (UpdateSandMachineLabelResponse);
+  rpc UpdateSandMachineLocalToolPermission(UpdateSandMachineLocalToolPermissionRequest) returns (UpdateSandMachineLocalToolPermissionResponse);
+  rpc UpdateSandMachineMessagesEnabled(UpdateSandMachineMessagesEnabledRequest) returns (UpdateSandMachineMessagesEnabledResponse);
+  rpc UpdateUserName(UpdateUserNameRequest) returns (UpdateUserNameResponse);
+  rpc UpdateUserPluginInstall(UpdateUserPluginInstallRequest) returns (UpdateUserPluginInstallResponse);
+  rpc ValidateMcpOAuthTokens(ValidateMcpOAuthTokensRequest) returns (ValidateMcpOAuthTokensResponse);
+}

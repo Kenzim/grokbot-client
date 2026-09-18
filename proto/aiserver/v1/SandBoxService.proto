@@ -1,0 +1,60 @@
+// Grok Bot backend API — reverse engineered from grok-bot 0.51.0
+// (Electron "sand" build, embedded protobuf-ts descriptors). Do not edit by hand.
+
+syntax = "proto3";
+
+package aiserver.v1;
+
+import "aiserver/v1/types.proto";
+
+service SandBoxService {
+  rpc EnsureSandBox(EnsureSandBoxRequest) returns (EnsureSandBoxResponse);
+  rpc EnsureSandBoxWindow(EnsureSandBoxWindowRequest) returns (EnsureSandBoxResponse);
+  rpc RecreateSandBox(RecreateSandBoxRequest) returns (RecreateSandBoxResponse);
+  rpc ForceRecreateSandBox(ForceRecreateSandBoxRequest) returns (RecreateSandBoxResponse);
+  rpc AdminRecreateSandBox(AdminRecreateSandBoxRequest) returns (RecreateSandBoxResponse);
+  rpc AdminForceRecreateSandBox(AdminForceRecreateSandBoxRequest) returns (RecreateSandBoxResponse);
+  rpc PresignSandBoxStoreWrites(PresignSandBoxStoreWritesRequest) returns (PresignSandBoxStoreWritesResponse);
+  rpc CompleteSandBoxStoreMultipartWrites(CompleteSandBoxStoreMultipartWritesRequest) returns (CompleteSandBoxStoreMultipartWritesResponse);
+  rpc AbortSandBoxStoreMultipartWrites(AbortSandBoxStoreMultipartWritesRequest) returns (AbortSandBoxStoreMultipartWritesResponse);
+  rpc PresignSandBoxStoreReads(PresignSandBoxStoreReadsRequest) returns (PresignSandBoxStoreReadsResponse);
+  rpc StatSandBoxStoreObject(StatSandBoxStoreObjectRequest) returns (StatSandBoxStoreObjectResponse);
+  rpc ListSandBoxStoreObjects(ListSandBoxStoreObjectsRequest) returns (ListSandBoxStoreObjectsResponse);
+  rpc AdminGetSandBoxStoreStatus(AdminSandBoxStoreStatusRequest) returns (AdminSandBoxStoreStatusResponse);
+  rpc AdminUpdateSandBoxHost(AdminUpdateSandBoxHostRequest) returns (AdminUpdateSandBoxHostResponse);
+  rpc AdminGetSandBoxHostStatus(AdminSandBoxHostStatusRequest) returns (AdminSandBoxHostStatusResponse);
+  rpc AdminSnapshotSandBoxStore(AdminSnapshotSandBoxStoreRequest) returns (AdminSnapshotSandBoxStoreResponse);
+  rpc AdminListSandBoxStoreManifestVersions(AdminListSandBoxStoreManifestVersionsRequest) returns (AdminListSandBoxStoreManifestVersionsResponse);
+  rpc AdminRestoreSandBoxStoreSnapshot(AdminRestoreSandBoxStoreSnapshotRequest) returns (AdminRestoreSandBoxStoreSnapshotResponse);
+  rpc AdminHibernateSandBox(AdminHibernateSandBoxRequest) returns (AdminHibernateSandBoxResponse);
+  rpc AdminListSandAgents(AdminListSandAgentsRequest) returns (AdminListSandAgentsResponse);
+  rpc AdminGetSandAgentTranscriptPage(AdminGetSandAgentTranscriptPageRequest) returns (AdminGetSandAgentTranscriptPageResponse);
+  rpc WatchSandBoxMigration(WatchSandBoxMigrationRequest) returns (stream SandBoxMigrationEvent);
+  rpc AdminWatchSandBoxMigration(AdminWatchSandBoxMigrationRequest) returns (stream SandBoxMigrationEvent);
+  rpc GetSandBoxRunState(GetSandBoxRunStateRequest) returns (GetSandBoxRunStateResponse);
+  rpc GetSandBoxUpgradeSchedule(GetSandBoxUpgradeScheduleRequest) returns (GetSandBoxUpgradeScheduleResponse);
+  rpc ScheduleSandBoxUpgrade(ScheduleSandBoxUpgradeRequest) returns (ScheduleSandBoxUpgradeResponse);
+  rpc CancelSandBoxUpgrade(CancelSandBoxUpgradeRequest) returns (CancelSandBoxUpgradeResponse);
+  rpc RescheduleSandBoxUpgrade(RescheduleSandBoxUpgradeRequest) returns (RescheduleSandBoxUpgradeResponse);
+  rpc ListSandBoxes(ListSandBoxesRequest) returns (ListSandBoxesResponse);
+  rpc NotifySandAgentTurnFinished(NotifySandAgentTurnFinishedRequest) returns (NotifySandAgentTurnFinishedResponse);
+  rpc ListSandSetupManifests(ListSandSetupManifestsRequest) returns (ListSandSetupManifestsResponse);
+  rpc ListTeamSandSetupManifests(ListTeamSandSetupManifestsRequest) returns (ListTeamSandSetupManifestsResponse);
+  rpc SaveTeamSandSetupManifest(SaveTeamSandSetupManifestRequest) returns (SaveTeamSandSetupManifestResponse);
+  rpc DeleteTeamSandSetupManifest(DeleteTeamSandSetupManifestRequest) returns (DeleteTeamSandSetupManifestResponse);
+  rpc ListTeamMemberSandBoxes(ListTeamMemberSandBoxesRequest) returns (ListTeamMemberSandBoxesResponse);
+  rpc KillTeamMemberSandBox(KillTeamMemberSandBoxRequest) returns (KillTeamMemberSandBoxResponse);
+  rpc RecreateTeamMemberSandBox(RecreateTeamMemberSandBoxRequest) returns (RecreateSandBoxResponse);
+  rpc GetTeamMemberSandBoxMigrationStatus(GetTeamMemberSandBoxMigrationStatusRequest) returns (GetTeamMemberSandBoxMigrationStatusResponse);
+  rpc StartBulkTeamMemberSandBoxOperation(StartBulkTeamMemberSandBoxOperationRequest) returns (StartBulkTeamMemberSandBoxOperationResponse);
+  rpc GetBulkTeamMemberSandBoxOperationStatus(GetBulkTeamMemberSandBoxOperationStatusRequest) returns (GetBulkTeamMemberSandBoxOperationStatusResponse);
+  rpc MintSandVoiceCallSecret(MintSandVoiceCallSecretRequest) returns (MintSandVoiceCallSecretResponse);
+  rpc BeginOnePasswordConnection(BeginOnePasswordConnectionRequest) returns (BeginOnePasswordConnectionResponse);
+  rpc CompleteOnePasswordConnection(CompleteOnePasswordConnectionRequest) returns (OnePasswordState);
+  rpc GetOnePasswordState(GetOnePasswordStateRequest) returns (OnePasswordState);
+  rpc SyncOnePasswordConnections(SyncOnePasswordConnectionsRequest) returns (OnePasswordState);
+  rpc DeleteOnePasswordConnection(DeleteOnePasswordConnectionRequest) returns (OnePasswordState);
+  rpc SetOnePasswordAlwaysAllow(SetOnePasswordAlwaysAllowRequest) returns (OnePasswordState);
+  rpc ApproveOnePasswordCredentialRequest(ApproveOnePasswordCredentialRequestRequest) returns (OnePasswordCredentialDecisionResponse);
+  rpc DenyOnePasswordCredentialRequest(DenyOnePasswordCredentialRequestRequest) returns (OnePasswordCredentialDecisionResponse);
+}

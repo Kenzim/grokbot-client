@@ -1,0 +1,17 @@
+// Grok Bot backend API — reverse engineered from grok-bot 0.51.0
+// (Electron "sand" build, embedded protobuf-ts descriptors). Do not edit by hand.
+
+syntax = "proto3";
+
+package aiserver.v1;
+
+import "aiserver/v1/types.proto";
+
+service AiService {
+  rpc AvailableModels(AvailableModelsRequest) returns (AvailableModelsResponse);
+  rpc ReportClientNumericMetrics(ReportClientNumericMetricsRequest) returns (ReportClientNumericMetricsResponse);
+  rpc ReportSandProcessMetrics(ReportSandProcessMetricsRequest) returns (ReportSandProcessMetricsResponse);
+  rpc RunGenerateImage(RunGenerateImageRequest) returns (RunGenerateImageResponse);
+  rpc TextToSpeech(TextToSpeechRequest) returns (TextToSpeechResponse);
+  rpc TranscribeAudio(TranscribeAudioRequest) returns (TranscribeAudioResponse);
+}

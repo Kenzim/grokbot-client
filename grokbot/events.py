@@ -1,4 +1,4 @@
-"""Typed watcher events. See docs/API.md#event-types."""
+"""Typed watcher events."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -8,28 +8,50 @@ from typing import Any
 @dataclass
 class Message:
     """A transcript message entry (agent or user)."""
+
     agent_id: str
+    session_id: str
     entry_id: str
     seq: int
     text: str
     role: str
-    ts: float
+    ts: float = 0.0
+    entry_kind: str = ""
+    body: Any = None
 
 
 @dataclass
 class WidgetRequest:
     """An interactive widget: captcha, form, credential request, or approval."""
+
     agent_id: str
-    entry_id: str
     session_id: str
+    entry_id: str
     kind: str
     prompt: str
+    request_id: str = ""
+    body: Any = None
+
+
+@dataclass
+class HandoffRequested:
+    """The agent wants a human to take over the cloud desktop (captcha / login)."""
+
+    agent_id: str
+    session_id: str
+    request_id: str
+    instruction: str
+    reason: str = ""
+    tab_id: str = ""
 
 
 @dataclass
 class AgentStateUpdate:
     agent_id: str
-    live_state: Any
+    session_id: str
+    is_running: bool
+    is_composing: bool
+    live_state: Any = None
 
 
 @dataclass
@@ -41,20 +63,28 @@ class ComputerActions:
 @dataclass
 class TurnFailed:
     agent_id: str
+    session_id: str
     reason: str
+    code: str = ""
+    turn_id: str = ""
 
 
 @dataclass
 class RosterChanged:
-    pass
+    kind: str
+    agent_id: str
 
 
 @dataclass
 class BoxStateChanged:
-    agent_id: str
-    run_state: Any
+    run_state: str
+    raw: Any = None
 
 
 @dataclass
 class StreamReset:
     """Stream was cleared or the cursor expired; a resync already happened."""
+
+    agent_id: str
+    session_id: str
+    reason: str = ""

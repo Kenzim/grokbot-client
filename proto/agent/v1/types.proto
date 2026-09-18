@@ -1,0 +1,135 @@
+// Grok Bot backend API — reverse engineered from grok-bot 0.51.0
+// (Electron "sand" build, embedded protobuf-ts descriptors). Do not edit by hand.
+
+syntax = "proto3";
+
+package agent.v1;
+
+import "google/protobuf/struct.proto";
+
+message CustomModeDescriptor {
+  string id = 1;
+  string label = 2;
+  optional string description = 3;
+  optional string icon = 4;
+  optional string color = 5;
+  CustomModeSource source = 6;
+  optional string source_path = 7;
+  optional string source_hash = 8;
+  optional string managed_skill_id = 9;
+  optional string plugin_id = 10;
+  optional string plugin_snapshot_token = 11;
+}
+
+enum CustomModeSource {
+  CUSTOM_MODE_SOURCE_UNSPECIFIED = 0;
+  CUSTOM_MODE_SOURCE_AGENT_SKILL = 1;
+  CUSTOM_MODE_SOURCE_PLUGIN_SKILL = 2;
+  CUSTOM_MODE_SOURCE_REPO_SKILL = 3;
+  CUSTOM_MODE_SOURCE_MANAGED_SKILL = 4;
+}
+
+message McpApproved {
+}
+
+message McpError {
+  string error = 1;
+  optional bool needs_auth = 2;
+}
+
+message McpImageContent {
+  bytes data = 1;
+  string mime_type = 2;
+}
+
+message McpPermissionDenied {
+  string error = 1;
+  bool is_readonly = 2;
+}
+
+message McpRejected {
+  string reason = 1;
+  bool is_readonly = 2;
+}
+
+message McpResult {
+  oneof result {
+    McpSuccess success = 1;
+    McpError error = 2;
+    McpRejected rejected = 3;
+    McpPermissionDenied permission_denied = 4;
+    McpToolNotFound tool_not_found = 5;
+    McpServerNotFound server_not_found = 6;
+    McpApproved approved = 7;
+  }
+}
+
+message McpServerNotFound {
+  string name = 1;
+  repeated string available_servers = 2;
+}
+
+message McpSuccess {
+  repeated McpToolResultContentItem content = 1;
+  bool is_error = 2;
+  .google.protobuf.Struct structured_content = 3;
+}
+
+message McpTextContent {
+  string text = 1;
+  optional OutputLocation output_location = 2;
+}
+
+message McpToolDefinition {
+  string name = 1;
+  string description = 2;
+  .google.protobuf.Value input_schema = 3;
+  string provider_identifier = 4;
+  string tool_name = 5;
+  optional string input_schema_json = 6;
+  optional string output_schema_json = 7;
+  optional string annotations_json = 8;
+}
+
+message McpToolNotFound {
+  string name = 1;
+  repeated string available_tools = 2;
+}
+
+message McpToolResultContentItem {
+  oneof content {
+    McpTextContent text = 1;
+    McpImageContent image = 2;
+  }
+}
+
+message OutputLocation {
+  string file_path = 1;
+  int64 size_bytes = 2;
+  int64 line_count = 3;
+}
+
+message RequestedModel {
+
+  message ModelParameterValue {
+    string id = 1;
+    string value = 2;
+  }
+}
+
+message TodoItem {
+  string id = 1;
+  string content = 2;
+  TodoStatus status = 3;
+  int64 created_at = 4;
+  int64 updated_at = 5;
+  repeated string dependencies = 6;
+}
+
+enum TodoStatus {
+  TODO_STATUS_UNSPECIFIED = 0;
+  TODO_STATUS_PENDING = 1;
+  TODO_STATUS_IN_PROGRESS = 2;
+  TODO_STATUS_COMPLETED = 3;
+  TODO_STATUS_CANCELLED = 4;
+}

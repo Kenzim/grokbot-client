@@ -1,9 +1,13 @@
 import json
 from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
 
 from grokbot.desktop import derive_vnc_connect_url
+from grokbot.events import HandoffRequested, WidgetRequest
 from grokbot.models import TranscriptEntry, decode_body
-from grokbot.transcripts import events_from_entry
+from grokbot.transcripts import TranscriptWatcher, events_from_entry
 
 
 def test_decode_json_body():
@@ -48,6 +52,66 @@ def test_events_from_send_message_text():
     evs = events_from_entry("a", "", entry)
     assert evs[0].text == "hello from the bot"
     assert evs[0].role == "assistant"
+
+
+def test_widget_event_includes_timestamp():
+    entry = TranscriptEntry(
+        seq=4,
+        entry_kind="captcha",
+        entry_id="cap1",
+        body={"prompt": "Solve this", "timestampMs": 1_700_000_000_000},
+        body_raw=None,
+        blob_hash=None,
+        body_omitted=False,
+        updated_seq=4,
+    )
+    evs = events_from_entry("a", "", entry)
+    assert isinstance(evs[0], WidgetRequest)
+    assert evs[0].ts == 1_700_000_000.0
+
+
+@pytest.mark.asyncio
+async def test_agent_state_handoff_emits_once_per_request_id():
+    watcher = TranscriptWatcher(SimpleNamespace())
+    emitted: list[object] = []
+
+    async def capture(event):
+        emitted.append(event)
+
+    watcher._emit = capture  # type: ignore[method-assign]
+
+    awaiting_state = SimpleNamespace(reason="captcha", tab_id="t1", since_ms=1_700_000_000_000)
+
+    class Live:
+        agent_id = "agent-1"
+        session_id = "s1"
+        is_running = True
+        is_composing_message = False
+        box_handoff_request_id = "h-old"
+        box_handoff_instruction = "Solve the captcha"
+        updated_at_ms = 1_700_000_000_000
+        awaiting = awaiting_state
+
+        def HasField(self, name: str) -> bool:
+            return name == "awaiting"
+
+    state = SimpleNamespace(live=[Live()])
+    await watcher._handle_agent_state(state)
+    await watcher._handle_agent_state(state)
+    handoffs = [e for e in emitted if isinstance(e, HandoffRequested)]
+    assert len(handoffs) == 1
+    assert handoffs[0].request_id == "h-old"
+    assert handoffs[0].reason == "captcha"
+    assert handoffs[0].since_ms == 1_700_000_000_000
+
+    live2 = Live()
+    live2.box_handoff_request_id = ""
+    await watcher._handle_agent_state(SimpleNamespace(live=[live2]))
+    live3 = Live()
+    live3.box_handoff_request_id = "h-new"
+    await watcher._handle_agent_state(SimpleNamespace(live=[live3]))
+    handoffs = [e for e in emitted if isinstance(e, HandoffRequested)]
+    assert [h.request_id for h in handoffs] == ["h-old", "h-new"]
 
 
 def test_events_from_nested_widget():

@@ -22,7 +22,7 @@ from grokbot.events import (
     TurnFailed,
     WidgetRequest,
 )
-from grokbot.models import Account, Agent, SendReceipt, Session, Todo, TranscriptCursor
+from grokbot.models import Account, Agent, Secret, SendReceipt, Session, Todo, TranscriptCursor
 
 __version__ = "0.1.0"
 SCHEMA_VERSION = "0.51.0"
@@ -43,6 +43,7 @@ __all__ = [
     "RefusalError",
     "RosterChanged",
     "SCHEMA_VERSION",
+    "Secret",
     "SendReceipt",
     "Session",
     "StreamError",

@@ -100,3 +100,32 @@ class DesktopSession:
             req.wake = True
         resp = await self._client.unary(GB, "EnsureSandBox", req)
         self._apply(resp)
+
+
+_HANDBACK = {
+    "UNSPECIFIED": t.GROK_BOT_BOX_HAND_BACK_TRIGGER_UNSPECIFIED,
+    "BUTTON": t.GROK_BOT_BOX_HAND_BACK_TRIGGER_BUTTON,
+    "VIEWER_CLOSED": t.GROK_BOT_BOX_HAND_BACK_TRIGGER_VIEWER_CLOSED,
+    "DISMISSED": t.GROK_BOT_BOX_HAND_BACK_TRIGGER_DISMISSED,
+}
+
+
+async def end_box_handoff(
+    client: "GrokBotClient",
+    agent_id: str,
+    request_id: str,
+    *,
+    trigger: str = "DISMISSED",
+) -> bool:
+    """Clear a stuck desktop handoff (captcha / login) without waking the box."""
+    key = (trigger or "DISMISSED").strip().upper()
+    resp = await client.unary(
+        GB,
+        "EndGrokBotBoxHandoff",
+        t.EndGrokBotBoxHandoffRequest(
+            agent_id=agent_id,
+            request_id=request_id,
+            trigger=_HANDBACK.get(key, t.GROK_BOT_BOX_HAND_BACK_TRIGGER_DISMISSED),
+        ),
+    )
+    return bool(resp.dispatched)

@@ -31,6 +31,7 @@ class WidgetRequest:
     prompt: str
     request_id: str = ""
     body: Any = None
+    ts: float = 0.0
 
 
 @dataclass
@@ -43,6 +44,8 @@ class HandoffRequested:
     instruction: str
     reason: str = ""
     tab_id: str = ""
+    since_ms: int = 0
+    updated_at_ms: int = 0
 
 
 @dataclass

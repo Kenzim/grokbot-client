@@ -105,6 +105,7 @@ class GrokBotClient:
         self._http = http or httpx.AsyncClient(timeout=httpx.Timeout(timeout, read=120.0))
         self._agents = None
         self._widgets = None
+        self._secrets = None
 
     async def __aenter__(self) -> GrokBotClient:
         return self
@@ -236,10 +237,25 @@ class GrokBotClient:
             self._widgets = WidgetAPI(self)
         return self._widgets
 
+    @property
+    def secrets(self):
+        from grokbot.secrets import SecretsAPI
+
+        if self._secrets is None:
+            self._secrets = SecretsAPI(self)
+        return self._secrets
+
     async def desktop(self, *, wake: bool = False):
         from grokbot.desktop import DesktopSession
 
         return await DesktopSession.ensure(self, wake=wake)
+
+    async def end_handoff(
+        self, agent_id: str, request_id: str, *, trigger: str = "DISMISSED"
+    ) -> bool:
+        from grokbot.desktop import end_box_handoff
+
+        return await end_box_handoff(self, agent_id, request_id, trigger=trigger)
 
     def watch(self, *, include_unlisted_agents: bool = True, inline_body_max_bytes: int = 65536):
         from grokbot.transcripts import TranscriptWatcher

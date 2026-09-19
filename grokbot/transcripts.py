@@ -68,10 +68,29 @@ def _is_widget(kind: str, body: Any) -> bool:
     return False
 
 
+def _body_ts(body: Any) -> float:
+    if not isinstance(body, dict):
+        return 0.0
+    for key in ("timestampMs", "ts", "timestamp", "created_at_ms", "sent_at_ms", "since_ms"):
+        if key not in body:
+            continue
+        try:
+            ts = float(body[key])
+        except (TypeError, ValueError):
+            continue
+        if ts > 1e12:
+            ts = ts / 1000.0
+        return ts
+    msg = body.get("message")
+    if isinstance(msg, dict):
+        return _body_ts(msg)
+    return 0.0
+
+
 def _extract_text_role(body: Any, kind: str) -> tuple[str, str, float]:
     role = "unknown"
     text = ""
-    ts = 0.0
+    ts = _body_ts(body)
     if isinstance(body, dict):
         msg = body.get("message")
         if isinstance(msg, dict) and msg.get("type") == "text":
@@ -80,15 +99,6 @@ def _extract_text_role(body: Any, kind: str) -> tuple[str, str, float]:
         else:
             text = str(body.get("content") or body.get("text") or body.get("prompt") or "")
             role = str(body.get("role") or body.get("author") or body.get("from") or role)
-        for key in ("timestampMs", "ts", "timestamp", "created_at_ms", "sent_at_ms"):
-            if key in body:
-                try:
-                    ts = float(body[key])
-                    if ts > 1e12:
-                        ts = ts / 1000.0
-                except (TypeError, ValueError):
-                    pass
-                break
     elif isinstance(body, str):
         text = body
     if not role or role == "unknown":
@@ -132,6 +142,7 @@ def events_from_entry(
                 prompt=prompt,
                 request_id=request_id,
                 body=widget_obj if widget_obj is not None else body,
+                ts=_body_ts(body),
             )
         ]
     text, role, ts = _extract_text_role(body, kind)
@@ -169,6 +180,8 @@ class TranscriptWatcher:
         self._task: asyncio.Task[None] | None = None
         self._stop = asyncio.Event()
         self._callbacks: list[tuple[type, Callable]] = []
+        # agent_id → last emitted box_handoff_request_id (agent_state is a snapshot)
+        self._emitted_handoffs: dict[str, str] = {}
 
     def on(self, event_type: type, callback: Callable) -> None:
         self._callbacks.append((event_type, callback))
@@ -376,6 +389,9 @@ class TranscriptWatcher:
             if entry.updated_seq > cur.after_updated_seq:
                 cur.after_updated_seq = entry.updated_seq
             for event in events_from_entry(agent_id, session_id, entry):
+                # Catch-up must not re-open historical captcha/form widgets.
+                if isinstance(event, ev.WidgetRequest):
+                    continue
                 await self._emit(event)
         self.cursors[key] = cur
 
@@ -390,16 +406,29 @@ class TranscriptWatcher:
                     live_state=live,
                 )
             )
-            if live.box_handoff_request_id:
-                reason = live.awaiting.reason if live.HasField("awaiting") else ""
-                tab = live.awaiting.tab_id if live.HasField("awaiting") else ""
-                await self._emit(
-                    ev.HandoffRequested(
-                        agent_id=live.agent_id,
-                        session_id=live.session_id,
-                        request_id=live.box_handoff_request_id,
-                        instruction=live.box_handoff_instruction or "",
-                        reason=reason,
-                        tab_id=tab,
-                    )
+            request_id = str(getattr(live, "box_handoff_request_id", "") or "")
+            if not request_id:
+                self._emitted_handoffs.pop(live.agent_id, None)
+                continue
+            if self._emitted_handoffs.get(live.agent_id) == request_id:
+                continue
+            self._emitted_handoffs[live.agent_id] = request_id
+            reason = ""
+            tab = ""
+            since_ms = 0
+            if hasattr(live, "HasField") and live.HasField("awaiting"):
+                reason = str(live.awaiting.reason or "")
+                tab = str(live.awaiting.tab_id or "")
+                since_ms = int(getattr(live.awaiting, "since_ms", 0) or 0)
+            await self._emit(
+                ev.HandoffRequested(
+                    agent_id=live.agent_id,
+                    session_id=live.session_id,
+                    request_id=request_id,
+                    instruction=live.box_handoff_instruction or "",
+                    reason=reason,
+                    tab_id=tab,
+                    since_ms=since_ms,
+                    updated_at_ms=int(getattr(live, "updated_at_ms", 0) or 0),
                 )
+            )

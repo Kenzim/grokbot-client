@@ -119,6 +119,18 @@ async def test_chat_draft_requires_one_payload():
 
 
 @pytest.mark.asyncio
+async def test_end_handoff_unary():
+    def handler(request: httpx.Request) -> httpx.Response:
+        assert request.url.path.endswith("/aiserver.v1.GrokBotService/EndGrokBotBoxHandoff")
+        body = t.EndGrokBotBoxHandoffResponse(dispatched=True).SerializeToString()
+        return httpx.Response(200, content=body)
+
+    http = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    async with GrokBotClient(auth=Static("t"), http=http) as client:
+        assert await client.end_handoff("agent-1", "req-9") is True
+
+
+@pytest.mark.asyncio
 async def test_chat_draft_email():
     def handler(request: httpx.Request) -> httpx.Response:
         assert request.url.path.endswith("/SendGrokBotDraft")

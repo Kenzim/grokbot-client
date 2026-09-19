@@ -88,6 +88,27 @@ class Agent:
 
 
 @dataclass
+class Secret:
+    """Grok Bot secret metadata. The plaintext value is write-only on Put."""
+
+    name: str
+    description: str = ""
+    created_at_ms: int = 0
+    updated_at_ms: int = 0
+    raw: Any = None
+
+    @classmethod
+    def from_pb2(cls, msg) -> Secret:
+        return cls(
+            name=msg.name or "",
+            description=msg.description or "",
+            created_at_ms=int(msg.created_at_ms or 0),
+            updated_at_ms=int(msg.updated_at_ms or 0),
+            raw=msg,
+        )
+
+
+@dataclass
 class Session:
     session_id: str
     agent_id: str

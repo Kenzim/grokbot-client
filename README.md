@@ -73,6 +73,7 @@ This library covers:
 - send, interrupt, history, drafts, reactions
 - account-wide transcript watch (typed events, resume cursors)
 - widgets: respond, dismiss, forms, secrets, approvals
+- agent secrets (`client.secrets`: list / put / delete; list returns names only)
 - desktop coordinates for an external noVNC/RFB client (`wake=True` may
   start a hibernated sandbox)
 
@@ -185,6 +186,17 @@ await client.widgets.resolve_approval(widget, approved=True)
 
 `resolve_approval` picks virtual-card / local-tool-permission / auto-review
 from `widget.kind`. A `refusal` on the RPC raises `RefusalError`.
+
+## Agent secrets
+
+`ListGrokBotSecrets` returns names and descriptions only. Pass the plaintext
+on `put`; do not log it.
+
+```python
+await client.secrets.put(agent_id, "TWOCAPTCHA_API_KEY", value, description="2Captcha")
+names = [s.name for s in await client.secrets.list(agent_id)]
+await client.secrets.delete(agent_id, "TWOCAPTCHA_API_KEY")
+```
 
 ## Desktop (account sandbox)
 
